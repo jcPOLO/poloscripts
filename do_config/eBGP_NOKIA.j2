@@ -1,0 +1,36 @@
+PLANTILLA NODO MPLS para crear peering eBGP contra los NOKIA segmentado por VRF
+
+{{ nodo_mpls }}
+!
+sys
+#
+vlan 712
+ name FLEXWAN_WAN-JUST
+ description FLEXWAN_WAN-JUST
+#
+interface {{ int_concentrador_nokia }}
+ port trunk allow-pass vlan 712
+#
+int vlan 712
+ description FLEXWAN_WAN-JUST
+ ip binding vpn-instance WAN-JUST
+ ip address {{ ip_vlan_svi }} 29 
+ undo icmp host-unreachable send
+ undo icmp redirect send
+#
+ip ip-prefix PL-FILTRO-RUTAS-FLEX-WAN-JUST-IN index 10 permit 10.44.0.0 16 greater-equal 16 less-equal 32
+#
+route-policy RM-FILTRO-RUTAS-FLEX-WAN-JUST-IN permit node 10
+ description Match de redes anunciadas por los SDWAN Datos WAN-JUST
+ if-match ip-prefix PL-FILTRO-RUTAS-FLEX-WAN-JUST-IN
+#
+bgp 65500
+ ipv4-family vpn-instance WAN-JUST
+  peer {{ ip_vlan_svi_peer }} as-number 65000
+  peer {{ ip_vlan_svi_peer }} fake-as 65556
+  peer {{ ip_vlan_svi_peer }} route-policy PL-FILTRO-RUTAS-FLEX-WAN-JUST-IN import
+  peer {{ ip_vlan_svi_peer }} route-policy RM-ANUNCIO-RUTAS-DGA-OUT export
+#
+quit
+save all
+

@@ -1,0 +1,168 @@
+
+--------------CREAR CONTEXTO WIFI
+!
+!Hay que poner un flag para saber si es interfaz de core
+!para crear interconexion en 6509 p2p y security 0 en fw
+
+Firepower 192.168.159.51:
+!
+en
+!
+changeto context system
+!
+conf t
+!
+{% for VLAN in VLANS %}
+interface Port-channel2.{{ VLAN['tag'] }}
+ description {{ VLAN['description'] }}
+ vlan {{ VLAN['tag'] }}
+!
+{% endfor %}
+context {{ context }}
+  allocate-interface Port-channel2.162
+  {% for VLAN in VLANS %}
+  allocate-interface Port-channel2.{{ VLAN['tag'] }}
+  {% endfor %}
+  config-url disk0:/{{ context }}.cfg
+  join-failover-group {{ failover_group }}
+!
+changeto context {{ context }}
+!
+conf t
+!
+{% for VLAN in VLANS %}
+interface Port-channel2.{{ VLAN['tag'] }}
+ nameif {{ VLAN['nameif'] }}
+ security-level 100
+ ip address {{ VLAN['ip_mask'] }} standby {{ VLAN['ip_stby'] }}
+!
+{% endfor %}
+interface Port-channel2.162
+  nameif gestion
+  security-level 100
+  no ip address
+!
+{% for VLAN in VLANS %}
+access-list {{ VLAN['nameif'] }}_access_in line 1 extended permit ip any any
+access-group {{ VLAN['nameif'] }}_access_in in interface {{ VLAN['nameif'] }}
+{% endfor %}
+!
+{% for VLAN in VLANS %}
+icmp permit any {{ VLAN['nameif'] }}
+{% endfor %}
+!
+username comunicaciones password {{ password_comunicaciones }} privilege 15
+
+Core Pigna 6509
+!
+conf t
+!
+{% for VLAN in VLANS %}
+vlan {{ VLAN['tag'] }}
+ name {{ VLAN['description'] }}
+!
+int po510
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+int po500
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+{% endfor %}
+
+Core Walqa 6509
+!
+conf t
+!
+{% for VLAN in VLANS %}
+vlan {{ VLAN['tag'] }}
+ name {{ VLAN['description'] }}
+!
+int po510
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+int po500
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+{% endfor %}
+
+nexus pigna y nexus walqa
+!
+conf t
+!
+{% for VLAN in VLANS %}
+vlan {{ VLAN['tag'] }}
+ name {{ VLAN['description'] }}
+!
+int po50
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+int po40
+ switchport trunk allowed vlan add {{ VLAN['tag'] }}
+!
+{% endfor %}
+
+---------------------------------------------ROLL BACK
+
+Firepower 192.168.159.51:
+!
+en
+!
+changeto context system
+!
+conf t
+!
+{% for VLAN in VLANS %}
+no interface Port-channel2.{{ VLAN['tag'] }}
+{% endfor %}
+!
+no context {{ context }}
+
+Core Pigna 6509
+!
+conf t
+!
+{% for VLAN in VLANS %}
+no vlan {{ VLAN['tag'] }}
+!
+int po510
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+int po500
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+no int vlan {{ VLAN['tag'] }}
+!
+{% endfor %}
+
+Core Walqa 6509
+!
+conf t
+!
+{% for VLAN in VLANS %}
+no vlan {{ VLAN['tag'] }}
+!
+int po510
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+int po500
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+no int vlan {{ VLAN['tag'] }}
+!
+{% endfor %}
+
+nexus pigna y nexus walqa
+!
+conf t
+!
+{% for VLAN in VLANS %}
+no vlan {{ VLAN['tag'] }}
+!
+int po50
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+int po40
+ switchport trunk allowed vlan remove {{ VLAN['tag'] }}
+!
+{% endfor %}
+

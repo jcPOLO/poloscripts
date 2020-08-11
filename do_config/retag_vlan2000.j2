@@ -1,0 +1,174 @@
+cn 192.168.192.240
+! 
+! 6513 PIGNA 
+! 2000 VMOTION  active    Te1/9/13, Te2/9/13, Po5, Po500
+!
+conf t
+!
+
+!
+no vlan 2000
+!
+vlan {{ VLAN_NUEVA }}
+ name VMOTION
+!
+interface Po5 
+ switchport trunk allowed vlan remove 2000
+!
+interface range Te1/9/13 , Te2/9/13 , Po500
+ switchport trunk allowed vlan add {{ VLAN_NUEVA }}
+ switchport trunk allowed vlan remove 2000
+!
+spanning-tree vlan {{ VLAN_NUEVA }} priority 4096
+!
+end
+wr
+
+
+cn 192.168.192.192
+!
+! 6513 WALQA
+! 2000 VMOTION   active    Te1/9/6, Te2/9/6, Gi2/11/17, Gi2/12/12, Po5, Po500
+!
+conf t
+!
+no vlan 2000
+!
+vlan {{ VLAN_NUEVA }}
+ name VMOTION
+!
+interface Po5 
+ switchport trunk allowed vlan remove 2000
+!
+interface range Gi2/11/17 , Gi2/12/12
+ switchport access vlan {{ VLAN_NUEVA }}
+interface range Te1/9/6 , Te2/9/6 , Po500
+ switchport trunk allowed vlan add {{ VLAN_NUEVA }}
+ switchport trunk allowed vlan remove 2000
+!
+spanning-tree vlan {{ VLAN_NUEVA }} priority 4096
+!
+end
+wr
+
+
+nexuspigna
+!
+! NK9 PIGNA
+! 2000 VMOTION    active    Po10, Po50, Po60, Po70, Po203, Po204, Eth1/19, Eth1/21, Eth1/38, Eth1/39, Eth1/48, Eth1/49, Eth1/50, Eth1/51, Eth1/52
+!
+conf t
+!
+no vlan 2000
+!
+vlan {{ VLAN_NUEVA }}
+ name VMOTION
+!
+interface range Po50 , Ethernet1/21
+ switchport trunk allowed vlan remove 2000
+!
+interface range Po60 , Po203 , Po204
+ switchport trunk allowed vlan add {{ VLAN_NUEVA }}
+ switchport trunk allowed vlan remove 2000
+!
+end
+wr
+
+
+
+nexuswalqa
+!
+! NK9 PIGNA
+! 2000 VMOTION  active    Po10, Po50, Po60, Po203, Po204, Eth1/19, Eth1/21, Eth1/28, Eth1/29, Eth1/32, Eth1/33, Eth1/43, Eth1/48, Eth1/49, Eth1/50, Eth1/51, Eth1/52
+!
+conf t
+!
+no vlan 2000
+!
+vlan {{ VLAN_NUEVA }}
+ name VMOTION
+!
+interface range Po50 , Ethernet1/21
+ switchport trunk allowed vlan remove 2000
+!
+! probablemente no hay que pasar la vlan por aqui : Ethernet1/28(bigan) , Ethernet1/29 (bigan), Ethernet1/43 (SW1 C7000)
+interface range Po60 , Po203 , Po204 , Ethernet1/28 , Ethernet1/29 , Ethernet1/43 , Po40
+ switchport trunk allowed vlan add {{ VLAN_NUEVA }}
+ switchport trunk allowed vlan remove 2000
+!
+end
+wr
+
+
+cn 192.168.252.3
+!
+! CORE PIGNA
+! 2000 VMOTION  active    Po5, Po100, Po500, Po510
+!
+conf t
+!
+no vlan 2000
+!
+interface range Po5 , Po100 , Po500 , Po510
+ switchport trunk allowed vlan remove 2000
+!
+end
+wr
+
+
+
+cn 192.168.192.70
+!
+! CORE WALQA
+! 2000 VMOTION  active    Po5, Po11, Po500, Po510
+!
+conf t
+!
+no vlan 2000
+!
+interface range Po5 , Po11 , Po500 , Po510
+ switchport trunk allowed vlan remove 2000
+!
+end
+wr
+
+
+cn 192.168.7.2
+# X8 PIGNA
+#
+sys
+#
+interface Eth-Trunk11.2000
+ und mpls l2vc 192.168.7.11 2000
+# vlan-type dot1q 2000
+# description VMOTION
+# mpls l2vc 192.168.7.11 2000
+#
+und interface Eth-Trunk11.2000
+#
+Control+Z
+#
+save all
+Y
+ 
+mpls ldp remote-peer 192.168.7.4
+ remote-ip 192.168.7.4
+ 
+ 
+cn 192.168.7.2
+# X8 WALQA
+#
+sys
+#
+interface Eth-Trunk11.2000
+ und mpls l2vc 192.168.7.2 2000
+# vlan-type dot1q 2000
+# description VMOTION
+# mpls l2vc 192.168.7.2 2000
+#
+und interface Eth-Trunk11.2000
+#
+Control+Z
+#
+save all
+Y
