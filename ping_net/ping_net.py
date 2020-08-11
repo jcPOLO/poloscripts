@@ -1,9 +1,10 @@
 import getopt
 import sys
-import os
 import ipaddress
 import subprocess
-import time
+
+
+MAX_PROCESS = 10000
 
 
 def args():
@@ -26,10 +27,10 @@ def args():
     else:
         print(f'Usa -[f] [filename]')
 
+
 def main():
-    net = ''
     result = []
-    p = {}
+    pings = {}
     i = 0
 
     net = args()
@@ -38,34 +39,34 @@ def main():
         network = ipaddress.ip_network(net)
         print(f'Working with {network}')
 
-        # 1.52 sec
         for host in network.hosts():
             host = str(host)
 
-            p[host] = subprocess.Popen(
+            pings[host] = subprocess.Popen(
                 ['ping', '-c2', '-n', '-i0.5', '-W1', host],
                 shell=False,
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
                 )
             i += 1
-            print(i,end='_')
-            if i > 10000:
-                while p:
-                    for host, proc in p.items():
-                        print('.', end='')
-                        if proc.poll() is not None:
-                            del p[host]
+            # print(i, end='_')
+            if i > MAX_PROCESS:
+                while pings:
+                    for host, ping in pings.items():
+                        # print(i, end='.')
+                        # check if the child process has ended
+                        if ping.poll() is not None:
+                            del pings[host]
                             i -= 1
-                            if proc.returncode == 0:
+                            if ping.returncode == 0:
                                 result.append(host)
                             break
 
-        while p:
-            for host, proc in p.items():
+        while pings:
+            for host, ping in pings.items():
                 print('.', end='')
-                if proc.poll() is not None:
-                    del p[host]
-                    if proc.returncode == 0:
+                if ping.poll() is not None:
+                    del pings[host]
+                    if ping.returncode == 0:
                         result.append(host)
                     break
 
