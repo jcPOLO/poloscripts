@@ -43,6 +43,18 @@ def get_nets_from_file(file: str) -> List[str]:
     return r
 
 
+def process_childs(pings: Dict, result: List, pings_buffered: int) -> None:
+    while pings:
+        for host, ping in pings.items():
+            # check if the child process has ended
+            if ping.poll() is not None:
+                del pings[host]
+                pings_buffered -= 1
+                if ping.returncode == 0:
+                    result.append(host)
+                break
+
+
 def main():
 
     nets = args()
@@ -66,23 +78,9 @@ def main():
                     )
                 i += 1
                 if i > MAX_PROCESS:
-                    while pings:
-                        for host, ping in pings.items():
-                            # check if the child process has ended
-                            if ping.poll() is not None:
-                                del pings[host]
-                                i -= 1
-                                if ping.returncode == 0:
-                                    result.append(host)
-                                break
-
-            while pings:
-                for host, ping in pings.items():
-                    if ping.poll() is not None:
-                        del pings[host]
-                        if ping.returncode == 0:
-                            result.append(host)
-                        break
+                    process_childs(pings, result, i)
+                    
+            process_childs(pings, result, i)
 
             file = net.replace('/', '_') + '.txt'
             with open(file, 'w+') as f:
