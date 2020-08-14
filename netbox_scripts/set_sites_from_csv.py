@@ -3,8 +3,18 @@ import os
 import getopt
 import sys
 from typing import List, Dict
+from slugify import slugify
+import pynetbox
 
-def args():
+
+def load_api():
+    return pynetbox.api(
+        'http://aragon.netbox.com',
+        token='65fa3de4a2de953dca49e88ffdb5a1daebfcc4c7'
+    )
+
+
+def get_args():
     try:
         opts, args = getopt.getopt(sys.argv[1:], 'hf:', ['help', 'file='])
     except getopt.GetoptError:
@@ -25,21 +35,31 @@ def args():
         print(f'Usa -[f] [filename]')
 
 
-def get_from_file(file: str) -> List[str]:
-    path =  os.getcwd()
+def get_from_file(file: str) -> str:
+    path = os.getcwd()
     filename = f'{path}/{file}'
     return filename
 
 
 def main():
-    arg = args()
-    print(arg)
+    arg = get_args()
+    i = 0
+    nb = load_api()
+
+    print(nb.dcim.devices.all())
+    exit()
 
     with open(arg) as f:
-        data = csv.DictReader(f)
+        data = csv.DictReader(f, quotechar="'", delimiter=';')
+        print(data.fieldnames)
         for row in data:
-            print(row["'DIRECCION'"])
-            break
+            i += 1
+            poblacion = row["POBLACION"].title()
+            provincia = row["PROVINCIA"].capitalize()
+            if poblacion:
+                print(f'{slugify(poblacion)},{poblacion},Provincia {provincia}')
+                if i == -1:
+                    break
 
 
 if __name__ == "__main__":
