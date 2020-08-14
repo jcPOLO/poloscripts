@@ -22,8 +22,7 @@ def args():
                 print(f'Usa -[f|n] [filename|network] ')
                 sys.exit()
             elif opt in ('-n', "--net"):
-                r = []
-                r.append(str(arg))
+                r = [str(arg)]
                 return r
             elif opt in ('-f', '--file'):
                 return get_nets_from_file(str(arg))
