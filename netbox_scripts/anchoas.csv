@@ -1,4 +1,4 @@
-['Codigo-N', 'DIRECCION', 'ACTIVIDAD - Nombre Sede Nuevo', 'Ambito', 'TELEFONO Principal', 'Respaldo Movil / NGN/ RDSI Local', 'POBLACION', 'PROVINCIA', 'NIF', 'DISTRITO POSTAL', 'DISTRITO TARIFICACION', 'TIPO CONEXIÓN', 'SERVICIOS Prestados', 'ESTADO julio 2018', 'CRITICIDAD', 'Horario Servicio', 'Contacto Centro Fijo', 'Conatcto Centro Móvil', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+slug,name,parent
 abiego,Abiego,Provincia Huesca
 acered,Acered,Provincia Huesca
 adahuesca,Adahuesca,Provincia Zaragoza
@@ -526,9 +526,6 @@ villel,Villel,Provincia Huesca
 vinaceite,Vinaceite,Provincia Huesca
 visiedo,Visiedo,Provincia Teruel
 zaida-la,Zaida (La),Provincia Zaragoza
-zaidin,Zaidin,Provincia Zaragoza
 zaidin,Zaidín,Provincia Huesca
-zaragoza,Zaragoza,Provincia Teruel
-zuera,Zuera,Provincia Huesca
-619807453-749003,619807453 / 749003,Provincia 
-Elapsed time during the whole program in seconds: 0.02
+zaragoza,Zaragoza,Provincia Zaragoza
+zuera,Zuera,Provincia Zaragoza

@@ -5,11 +5,12 @@ import sys
 from typing import List, Dict
 from slugify import slugify
 import pynetbox
+import json
 
 
 def load_api():
     return pynetbox.api(
-        'http://aragon.netbox.com',
+        'http://netbox.aragon.es',
         token='65fa3de4a2de953dca49e88ffdb5a1daebfcc4c7'
     )
 
@@ -43,23 +44,37 @@ def get_from_file(file: str) -> str:
 
 def main():
     arg = get_args()
-    i = 0
     nb = load_api()
 
-    print(nb.dcim.devices.all())
-    exit()
+    # albalatillo,Albalatillo,Provincia Zaragoza
+    #region = nb.dcim.regions.create(region)
 
-    with open(arg) as f:
-        data = csv.DictReader(f, quotechar="'", delimiter=';')
+    with open(arg, encoding="utf8") as f:
+        #data = csv.DictReader(f, quotechar="'", delimiter=';')
+        data = csv.DictReader(f)
         print(data.fieldnames)
+
         for row in data:
-            i += 1
-            poblacion = row["POBLACION"].title()
-            provincia = row["PROVINCIA"].capitalize()
-            if poblacion:
-                print(f'{slugify(poblacion)},{poblacion},Provincia {provincia}')
-                if i == -1:
-                    break
+            # poblacion = row["POBLACION"].title()
+            # provincia = row["PROVINCIA"].capitalize()
+            region = {
+                "name": '',
+                "slug": '',
+                "parent": {
+                    "name": '' 
+                }
+            }
+
+            name = row['name']
+            slug = row['slug']
+            parent = row['parent']
+            # print(f'Processing {name},{slug},{parent}...')
+            try:
+                r = nb.dcim.regions.create(name=name, slug=slug, parent={'name':parent})
+                print("EXITO",r)
+            except Exception:
+                print(f'Error {name},{slug},{parent}...')
+                pass
 
 
 if __name__ == "__main__":
