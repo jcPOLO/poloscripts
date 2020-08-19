@@ -23,9 +23,20 @@ def create_region(row, regions):
         return region
 
 
-def read_csv(file: TextIO) -> Callable:
+def create_site(row, sites):
+    if int(row["codinm"]) not int sites:
+        sites.append(row[""])
 
-    regions = []
+
+def create_entity(entity: str, row, wrapper) -> Callable:
+    if entity == 'region':
+        return create_region(row, wrapper)
+
+
+# Return a List of entity objects
+def read_csv(entity_name: str, file: TextIO) -> List[Object]:
+
+    wrapper = []
     r = []
 
     with open(file) as f:
@@ -33,10 +44,9 @@ def read_csv(file: TextIO) -> Callable:
         print(data.fieldnames)
 
         for row in data:
-            region = create_region(row, regions)
-            if region:
-                #print(f'{region.slug}, {region.name}, {region.parent}')
-                r.append(region)
+            entity = create_entity(entity_name, row, wrapper)
+            if entity:
+                r.append(entity)
                 
     return r
 
@@ -44,7 +54,7 @@ def read_csv(file: TextIO) -> Callable:
 def main():
     errors = []
     nb = load_api()
-    regions = read_csv(FILE)
+    regions = read_csv('region', FILE)
 
     for region in regions:
         try:
