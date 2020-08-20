@@ -2,3 +2,6 @@ venv/
 nornir-scripts/
 .idea/
 .vscode/
+__pycache__/
+~$*
+GESTION.*
