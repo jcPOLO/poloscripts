@@ -4,4 +4,6 @@ nornir-scripts/
 .vscode/
 __pycache__/
 ~$*
-GESTION.*
+*.csv
+*.xlsx
+.~lock*
