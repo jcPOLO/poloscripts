@@ -16,24 +16,31 @@ FILE = 'GESTION.xlsx'
 
 
 def create_region(dataf, regions):
-    if row["POBLACIÓN"].title() not in regions:
-        regions.append(row["POBLACIÓN"].title())
-        name = row["POBLACIÓN"].title()
-        parent = f"Provincia {row['PROVINCIA'].capitalize()}"
 
-        region = Region(name=name, parent=parent)
-        return region
+    name = dataf['POBLACIÓN'] # faltaria el .title()
+    parent = dataf['PROVINCIA'] # faltaria el 'Provincia ' y el .capitalize()
+
+    region = Region(name=name, parent=parent)
+    return region
 
 
 def create_site(dataf, sites):
-    if row["CODIGO INMUEBLE"] not in sites:
-        sites.append(row["CODIGO INMUEBLE"])
-        slug = f"{int(row['CODIGO INMUEBLE']):04d}"
-        name = row["NOMBRE SEDE"]
-        
-        
-        site = Site(name=name, slug=slug)
-        return site
+    
+    name = dataf['NOMBRE SEDE']
+    slug = dataf['CODIGO INMUEBLE']
+    status = dataf['ESTADO']
+    region = dataf['POBLACIÓN']
+    description = dataf['ACTIVIDAD']
+    physical_address = dataf['DIRECCIÓN SEDE']
+    # contact_name = dataf['']
+    contact_phone = dataf['TELÉFONO FIJO']
+    # contact_email = dataf['']
+    comments = dataf['TELÉFONO MÓVIL']
+    physical_address = dataf['DIRECCIÓN SEDE']
+    
+    zipp = zip(name, slug)
+    sites = [lambda row: Site(name=row[0], slug=row[1]) for row in zipp]
+    return sites
 
 
 def create_entity(entity: str, dataf, wrapper) -> Callable:
@@ -50,12 +57,11 @@ def get_data(entity_name: str, file: TextIO) -> List:
     r = []
 
     data = pd.read_excel(file,'Sedes')
-
-    for row in data:
-        entity = create_entity(entity_name, row, wrapper)
-        if entity:
-            r.append(entity)
-            
+    print(data.columns)
+    entity = create_entity(entity_name, data, wrapper)
+    if entity:
+        r.append(entity)
+        
     return r
 
 
@@ -64,7 +70,7 @@ def main():
     nb = load_api()
     # regions = get_data('region', FILE)
     sites = get_data('site', FILE)
-    print(sites[0].slug)
+    print(sites)
     exit()
 
     for region in regions:
