@@ -4,50 +4,70 @@ from slugify import slugify
 import pynetbox
 from Region import Region
 from Site import Site
+import os
+
+
+FILE = 'GESTION.xlsx'
+NETBOX_URL = 'http://netbox.aragon.es'
+
+class NetboxAPITokenNotFound(Exception):
+    pass
 
 
 def load_api():
-    return pynetbox.api(
-        'http://netbox.aragon.es',
-        token='65fa3de4a2de953dca49e88ffdb5a1daebfcc4c7'
-    )
-
-FILE = 'GESTION.xlsx'
+    token = os.getenv('NETBOX_API_TOKEN')
+    if token is None:
+        raise NetboxAPITokenNotFound('NETBOX_API_TOKEN was not found in enviromental variables')
+    return pynetbox.api(NETBOX_URL, token=token)
 
 
-def create_region(dataf, regions):
+def create_region(dataf):
 
-    name = dataf['POBLACIÓN'] # faltaria el .title()
-    parent = dataf['PROVINCIA'] # faltaria el 'Provincia ' y el .capitalize()
+    name = dataf['POBLACIÓN'].str.title()
+    parent = 'Provincia ' + dataf['PROVINCIA'].astype(str).str.capitalize()
 
-    region = Region(name=name, parent=parent)
-    return region
+    regions = [
+        Region(
+            name=str(name),
+            parent=str(parent)
+        ) for name,parent in zip(name, parent)
+    ]
+
+    return regions
 
 
-def create_site(dataf, sites):
+def create_site(dataf):
     
     name = dataf['NOMBRE SEDE']
     slug = dataf['CODIGO INMUEBLE']
     status = dataf['ESTADO']
-    region = dataf['POBLACIÓN']
+    region = dataf['POBLACIÓN'].title()
     description = dataf['ACTIVIDAD']
     physical_address = dataf['DIRECCIÓN SEDE']
     # contact_name = dataf['']
     contact_phone = dataf['TELÉFONO FIJO']
     # contact_email = dataf['']
     comments = dataf['TELÉFONO MÓVIL']
-    physical_address = dataf['DIRECCIÓN SEDE']
-    
-    zipp = zip(name, slug)
-    sites = [lambda row: Site(name=row[0], slug=row[1]) for row in zipp]
+
+    sites = [
+        Site(
+            name=str(name),
+            slug=f"{int(slug):04d}",
+            region={'slug': str(region)},
+            #region=nb.dcim.regions.get(slug=region),
+            physical_address=str(physical_address)
+        ) for name,slug,region,physical_address in zip(
+            name,slug,region,physical_address)
+    ]
+
     return sites
 
 
-def create_entity(entity: str, dataf, wrapper) -> Callable:
+def create_entity(entity: str, dataf) -> Callable:
     if entity == 'region':
-        return create_region(dataf, wrapper)
+        return create_region(dataf)
     if entity == 'site':
-        return create_site(dataf, wrapper)
+        return create_site(dataf)
 
 
 # Return a List of entity objects
@@ -58,32 +78,30 @@ def get_data(entity_name: str, file: TextIO) -> List:
 
     data = pd.read_excel(file,'Sedes')
     print(data.columns)
-    entity = create_entity(entity_name, data, wrapper)
-    if entity:
-        r.append(entity)
-        
-    return r
-
+    entity = create_entity(entity_name, data)
+    
+    return entity
 
 def main():
     errors = []
     nb = load_api()
-    # regions = get_data('region', FILE)
+
+    regions = get_data('region', FILE)
+    for r in regions:
+        print(vars(r))
+    exit()
     sites = get_data('site', FILE)
-    print(sites)
+
+    site = vars(sites[0]) # convert to Dict
+    print(f'aaaaaacnhoas: {site}')
+
+    try:
+        r = nb.dcim.sites.create(site)
+    except pynetbox.core.query.RequestError as e:
+        print(e)
+    
     exit()
 
-    for region in regions:
-        try:
-            r = nb.dcim.regions.create(name=region.name, slug=region.slug, parent={'name':region.parent})
-            # region_o = nb.dcim.regions.get(name=region.name)
-            # r = region_o.delete()
-            print(f'SUCCESS --- {region.name},{region.slug},{region.parent}.....................{r}..')
-        except Exception:
-            errors.append(region.name)
-            print(f'Error !!!!! {region.name},{region.slug},{region.parent}...')
-            pass
-    print("ERRORS {}".format(errors))
 
 
 if __name__ == "__main__":

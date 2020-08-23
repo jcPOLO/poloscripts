@@ -13,6 +13,7 @@ class Site:
         description: Optional[str] = None,
         physical_address: Optional[str] = None,
         contact_name: Optional[str] = None,
+        contact_phone: Optional[str] = None,
         contact_email: Optional[str] = None,
         comments: Optional[str] = None
     ):
@@ -24,6 +25,7 @@ class Site:
         self.description = description
         self.physical_address = physical_address
         self.contact_name = contact_name
+        self.contact_phone = contact_phone
         self.contact_email = contact_email
         self.comments = comments
 

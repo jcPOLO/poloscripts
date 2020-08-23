@@ -4,15 +4,22 @@ from slugify import slugify
 import pynetbox
 from Region import Region
 from Site import Site
+import os
+
+
+FILE = 'GESTION.csv'
+NETBOX_URL = 'http://netbox.aragon.es'
+
+
+class NetboxAPITokenNotFound(Exception):
+    pass
 
 
 def load_api():
-    return pynetbox.api(
-        'http://netbox.aragon.es',
-        token='65fa3de4a2de953dca49e88ffdb5a1daebfcc4c7'
-    )
-
-FILE = 'GESTION.csv'
+    token = os.getenv('NETBOX_API_TOKEN')
+    if token is None:
+        raise NetboxAPITokenNotFound('NETBOX_API_TOKEN was not found in enviromental variables')
+    return pynetbox.api(NETBOX_URL, token=token)
 
 
 def create_region(row, regions):
@@ -30,6 +37,14 @@ def create_site(row, sites):
         sites.append(row["CODIGO INMUEBLE"])
         slug = f"{int(row['CODIGO INMUEBLE']):04d}"
         name = row["NOMBRE SEDE"]
+        status = row['ESTADO']
+        region = row["POBLACIÓN"].title()
+        description = row['ACTIVIDAD']
+        physical_address = row['DIRECCIÓN SEDE']
+        # contact_name = row['']
+        contact_phone = row['TELÉFONO FIJO']
+        # contact_email = row['']
+        comments = row['TELÉFONO MÓVIL']
         
         
         site = Site(name=name, slug=slug)
@@ -51,7 +66,7 @@ def read_csv(entity_name: str, file: TextIO) -> List:
 
     with open(file) as f:
         data = csv.DictReader(f, delimiter=';')
-        print(data.fieldnames)
+        print(data)
 
         for row in data:
             entity = create_entity(entity_name, row, wrapper)
