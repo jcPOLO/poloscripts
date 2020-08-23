@@ -22,7 +22,6 @@ def load_api():
 
 
 def create_region(dataf):
-
     name = dataf['POBLACIÓN'].str.title()
     parent = 'Provincia ' + dataf['PROVINCIA'].astype(str).str.capitalize()
 
@@ -32,7 +31,6 @@ def create_region(dataf):
             parent=str(parent)
         ) for name,parent in zip(name, parent)
     ]
-
     return regions
 
 
@@ -72,31 +70,30 @@ def create_entity(entity: str, dataf) -> Callable:
 
 # Return a List of entity objects
 def get_data(entity_name: str, file: TextIO) -> List:
-
-    wrapper = []
-    r = []
-
     data = pd.read_excel(file,'Sedes')
-    print(data.columns)
     entity = create_entity(entity_name, data)
-    
     return entity
 
 def main():
-    errors = []
     nb = load_api()
 
     regions = get_data('region', FILE)
-    for r in regions:
-        print(vars(r))
-    exit()
-    sites = get_data('site', FILE)
+    # sites = get_data('site', FILE)
 
-    site = vars(sites[0]) # convert to Dict
-    print(f'aaaaaacnhoas: {site}')
+    for r in regions:
+        if r.slug == 'abiego':
+            region = r
+            break
+
+    r = region.delete(nb)
+    r = region.get_or_create(nb)
+    r = region.update(nb, description='anchoas')
+    print(r)
+    exit()
 
     try:
         r = nb.dcim.sites.create(site)
+
     except pynetbox.core.query.RequestError as e:
         print(e)
     
