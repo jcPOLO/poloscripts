@@ -27,7 +27,6 @@ class Region(object):
         data = {'name': self.name, 'slug': self.slug}
         try:
             region = nb.dcim.regions.get(**data) # returns pynetbox.core.response.Record object
-            import ipdb; ipdb.set_trace()
         except pynetbox.core.query.RequestError as e:
             print(e)
         return region
@@ -42,7 +41,6 @@ class Region(object):
             'description': self.description or ''
         }
         region = nb.dcim.regions.create(data) # returns pynetbox.core.response.Record object
-        import ipdb; ipdb.set_trace()
         return region
 
     def delete(self, nb):
@@ -54,22 +52,21 @@ class Region(object):
             print(e)
         return r
 
+    # TODO: Don't work if you delete a field (send as update ''), 
+    # it updates but it prints "not updated"
+    # Need to check if there is a difference between first object and
+    # updated object to know if it is updated.
     def update(self, nb, **kwargs):
         query = {'name': self.name, 'slug': self.slug}
-        data = {
-            'name': self.name or kwargs['name'],
-            'slug': self.slug or kwargs['slug'],
-            'parent':{
-                'name': self.parent or kwargs['description']
-            },
-            'description': self.description or kwargs['description']
-        }
         try:
             region = nb.dcim.regions.get(**query) # returns pynetbox.core.response.Record object
-            r = region.update(**data) if region else "Region not found"
+            r = region.update(kwargs) if region else "Region not found"
         except pynetbox.core.query.RequestError as e:
             print(e)
-        return r
+        if r:
+            return '{} updated.'.format(region)
+        else:
+            return '{} not updated.'.format(region)
 
     def get_or_create(self, nb):
         region = self.get(nb) 

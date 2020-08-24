@@ -70,35 +70,49 @@ def create_entity(entity: str, dataf) -> Callable:
 
 # Return a List of entity objects
 def get_data(entity_name: str, file: TextIO) -> List:
-    data = pd.read_excel(file,'Sedes')
+    df = pd.read_excel(file,'Sedes')
+    searchfor = ['zaragoza', 'huesca', 'teruel']
+    df = df[df.PROVINCIA.notnull()]
+    df = df[df['PROVINCIA'].notna()]
+    data = df[df.PROVINCIA.str.lower().str.contains('|'.join(searchfor))]
+
     entity = create_entity(entity_name, data)
     return entity
 
-def main():
-    nb = load_api()
+
+def dump_regions(nb):
+    errors = []
+    failed_regions = []
+    
 
     regions = get_data('region', FILE)
     # sites = get_data('site', FILE)
 
-    for r in regions:
-        if r.slug == 'abiego':
-            region = r
-            break
-
-    r = region.delete(nb)
-    r = region.get_or_create(nb)
-    r = region.update(nb, description='anchoas')
-    print(r)
-    exit()
-
     try:
-        r = nb.dcim.sites.create(site)
-
+        created = []
+        for region in regions:
+            if region.slug not in created:
+                r = region.get_or_create(nb)
+                created.append(region.slug)
+                print(r)
+            else:
+                print(f'{region.name} already created....')
     except pynetbox.core.query.RequestError as e:
-        print(e)
-    
-    exit()
+        errors.append(e)
+        failed_regions.append(region.name)
+        pass
 
+    # r = region.get_or_create(nb)
+    # r = region.delete(nb)
+    # r = region.update(nb, description='')
+
+    print("errors: {}".format(errors))
+    print("failed regions: {}".format(failed_regions))
+
+
+def main():
+    nb = load_api()
+    dump_regions(nb)
 
 
 if __name__ == "__main__":
