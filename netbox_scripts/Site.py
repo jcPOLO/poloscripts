@@ -1,40 +1,7 @@
 from typing import Optional
 from slugify import slugify
+import pynetbox
 
-
-'''
-{'id': 3842,
- 'name': 'Hospital Clinico Universitario',
- 'slug': '0515',
- 'status': {'value': 'staging', 'label': 'Staging'},
- 'region': {'id': 2844,
-  'url': 'http://netbox.aragon.es/api/dcim/regions/2844/',
-  'name': 'Zaragoza',
-  'slug': 'zaragoza'},
- 'tenant': None,
- 'facility': '',
- 'asn': None,
- 'time_zone': None,
- 'description': '',
- 'physical_address': 'Avda. San Juan Bosco  15',
- 'shipping_address': '',
- 'latitude': None,
- 'longitude': None,
- 'contact_name': '',
- 'contact_phone': '976556400',
- 'contact_email': '',
- 'comments': '',
- 'tags': [],
- 'custom_fields': {},
- 'created': '2020-08-13',
- 'last_updated': '2020-08-23T18:53:48.267205+02:00',
- 'circuit_count': None,
- 'device_count': None,
- 'prefix_count': None,
- 'rack_count': None,
- 'virtualmachine_count': None,
- 'vlan_count': None}
- '''
 
 class Site:
     def __init__(
@@ -76,19 +43,26 @@ class Site:
         data = {
             'name': self.name,
             'slug': self.slug,
-            'parent':{
-                'name': self.parent
-            },
-            'description': self.description or ''
+            'status': {'value': 'planned', 'label': 'Planned'},
+            'region': {'id': '', 'url': '', 'name': '', 'slug': ''},
+            'tenant': None,
+            'facility': '',
+            'description': self.description,
+            'physical_address': self.physical_address,
+            'contact_phone': self.contact_phone,
+            'contact_email': self.contact_email,
+            'comments': self.comments,
+            'tags': []
         }
-        region = nb.dcim.regions.create(data) # returns pynetbox.core.response.Record object
-        return region
+
+        site = nb.dcim.sites.create(data) # returns pynetbox.core.response.Record object
+        return site
 
     def delete(self, nb):
-        data = {'name': self.name, 'slug': self.slug}
+        data = {'slug': self.slug}
         try:
-            region = nb.dcim.regions.get(**data) # returns pynetbox.core.response.Record object
-            r = region.delete() if region else "Region not found"
+            site = nb.dcim.sites.get(**data) # returns pynetbox.core.response.Record object
+            r = site.delete() if site else "site not found"
         except pynetbox.core.query.RequestError as e:
             print(e)
         return r
@@ -100,19 +74,19 @@ class Site:
     def update(self, nb, **kwargs):
         query = {'name': self.name, 'slug': self.slug}
         try:
-            region = nb.dcim.regions.get(**query) # returns pynetbox.core.response.Record object
-            r = region.update(kwargs) if region else "Region not found"
+            site = nb.dcim.regions.get(**query) # returns pynetbox.core.response.Record object
+            r = site.update(kwargs) if site else "site not found"
         except pynetbox.core.query.RequestError as e:
             print(e)
         if r:
-            return '{} updated.'.format(region)
+            return '{} updated.'.format(site)
         else:
-            return '{} not updated.'.format(region)
+            return '{} not updated.'.format(site)
 
     def get_or_create(self, nb):
-        region = self.get(nb) 
-        if region is None:
-            region = self.create(nb)
-            return '{} created.'.format(region)
+        site = self.get(nb) 
+        if site is None:
+            site = self.create(nb)
+            return '{} created.'.format(site)
         else:
-            return '{} exists.'.format(region)
+            return '{} exists.'.format(site)

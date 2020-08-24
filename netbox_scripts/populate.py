@@ -110,9 +110,37 @@ def dump_regions(nb):
     print("failed regions: {}".format(failed_regions))
 
 
+def dump_sites(nb):
+    errors = []
+    failed_sites = []
+    
+    sites = get_data('site', FILE)
+
+    try:
+        created = []
+        for site in sites:
+            if site.slug not in created:
+                r = site.get_or_create(nb)
+                created.append(site.slug)
+                print(r)
+            else:
+                print(f'{site.name} already created....')
+    except pynetbox.core.query.RequestError as e:
+        errors.append(e)
+        failed_sites.append(site.name)
+        pass
+
+    # r = site.get_or_create(nb)
+    # r = site.delete(nb)
+    # r = site.update(nb, description='')
+
+    print("errors: {}".format(errors))
+    print("failed sites: {}".format(failed_sites))
+
 def main():
     nb = load_api()
-    dump_regions(nb)
+    # dump_regions(nb)
+    dump_sites(nb)
 
 
 if __name__ == "__main__":
