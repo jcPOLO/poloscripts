@@ -206,6 +206,9 @@ class CEDriver(NetworkDriver):
             # TODO: for S2700
             elif 'uptime is' in line:
                 search_result = re.search(RE_QW_UPTIME, line)
+                if search_result is not None:
+                    model = search_result.group('uptime')
+                uptime = self._parse_uptime(str(search_result)) # review parse_uptime method
 
 
         if 'sysname ' in show_hostname:
