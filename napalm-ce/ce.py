@@ -56,6 +56,11 @@ RE_CE_SERIAL_VERSION = r"\((?P<serial_number>CE\S+)\s+(?P<os_version>V\S+)\)"
 RE_QW_OS_VERSION = r"Version\s+(?P<os_version>\d+\.\d+\s+\(.{1,10}\s+.*)$"
 RE_QW_MODEL = r"Quidway\s(?P<model>.{1,20})\s.*$"
 RE_QW_UPTIME = r": uptime is\s(?P<uptime>.*)$"
+RE_INTERFACES = r"(?P<interface>\S+)\s+(?P<physical_state>down|up|offline|\*down)\s+" \
+                      r"(?P<protocal_state>down|up|\*down)"
+RE_SERIAL = rf"BoardType={model}[\s\S]*?BarCode=(?P<serial_number>.*)$"
+RE_QW_LLDP_NEI = r"(?P<port>\w+\d+\/\S+)\s+(?P<hostname>\S+)\s+(?P<local>\S+)\s+(?P<timer>\S*)$"
+RE_CE_LLDP_NEI = r"(?P<local>\S+)\s+\d+\s+(?P<hostname>\S+)\s+(?P<port>\S+)"
 
 class CEDriver(NetworkDriver):
     """Napalm driver for HUAWEI CloudEngine."""
@@ -177,6 +182,9 @@ class CEDriver(NetworkDriver):
         show_ver = self.device.send_command('display version')
         show_hostname = self.device.send_command('display current-configuration | inc sysname')
         show_int_status = self.device.send_command('display interface brief')
+        
+        # TODO: for S2700
+        show_serial = self.device.send_command('display elabel')
 
         # serial_number/IOS version/uptime/model
         for line in show_ver.splitlines():
@@ -204,12 +212,21 @@ class CEDriver(NetworkDriver):
                 break
 
             # TODO: for S2700
-            elif 'uptime is' in line:
-                search_result = re.search(RE_QW_UPTIME, line)
-                if search_result is not None:
-                    model = search_result.group('uptime')
-                uptime = self._parse_uptime(str(search_result)) # review parse_uptime method
+            elif 'Quidway' in line and 'uptime is' in line:
+                search_model = re.search(RE_QW_MODEL, line)
+                search_uptime = re.search(RE_QW_UPTIME, line)
+                if search_model is not None and search_uptime is not None:
+                    model = search_model.group('model')
+                    uptime = search_uptime.group('uptime')
+                uptime = self._parse_uptime(uptime) # review parse_uptime method
 
+
+        # TODO: for S7200
+        if 'BarCode' in show_serial:
+            _, board_part = show_serial.split("Board Properties")
+            serial_re = rf"BoardType={model}[\s\S]*?BarCode=(.*)$"
+            search_result = re.findall(serial_re, board_part, flags=re.M)
+            serial_number = ''.join(search_result) if len(search_result) == 1 else ''
 
         if 'sysname ' in show_hostname:
             _, hostname = show_hostname.split("sysname ")
@@ -219,9 +236,7 @@ class CEDriver(NetworkDriver):
         interface_list = []
         if 'Interface' in show_int_status:
             _, interface_part = show_int_status.split("Interface")
-            re_intf = r"(?P<interface>\S+)\s+(?P<physical_state>down|up|offline|\*down)\s+" \
-                      r"(?P<protocal_state>down|up|\*down)"
-            search_result = re.findall(re_intf, interface_part, flags=re.M)
+            search_result = re.findall(RE_INTERFACES, interface_part, flags=re.M)
             for interface_info in search_result:
                 interface_list.append(interface_info[0])
 
@@ -232,7 +247,7 @@ class CEDriver(NetworkDriver):
             'serial_number': py23_compat.text_type(serial_number),
             'model': py23_compat.text_type(model),
             'hostname': py23_compat.text_type(hostname),
-            'fqdn': fqdn,  # ? fqdn(fully qualified domain name)
+            'fqdn': fqdn,
             'interface_list': interface_list
         }
 
@@ -727,8 +742,11 @@ class CEDriver(NetworkDriver):
         results = {}
         command = 'display lldp neighbor brief'
         output = self.device.send_command(command)
-        re_lldp = r"(?P<local>\S+)\s+\d+\s+(?P<port>\S+)\s+(?P<hostname>\S+)"
-        match = re.findall(re_lldp, output, re.M)
+        
+        # TODO: S2700. Edited the following line to add mine.
+        # match = re.findall(RE_CE_LLDP_NEI, output, re.M)
+        match = re.findall(RE_QW_LLDP_NEI, output, re.M)
+
         for neighbor in match:
             local_iface = neighbor[0]
             if local_iface not in results:
