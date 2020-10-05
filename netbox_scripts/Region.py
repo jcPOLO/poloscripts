@@ -1,6 +1,7 @@
 from typing import Optional, List, Dict
 from slugify import slugify
 import pynetbox
+import re
 
 
 class Region(object):
@@ -13,7 +14,7 @@ class Region(object):
         description: Optional[str] = None,
         nb = None
     ) -> None:
-        self.__name = name
+        self.name = name
         self.slug = slug or slugify(name) 
         self.parent = parent
         self.description = description
@@ -21,7 +22,7 @@ class Region(object):
     
     
     def __str__(self):
-        return "{} is a {}".format(self.__name, type(self).__name__)
+        return "{} is a {}".format(self.name, type(self).__name__)
     
     def get(self, nb):
         data = {'name': self.name, 'slug': self.slug}
@@ -81,10 +82,23 @@ class Region(object):
     def name(self):
         return self.__name
     
+    @property
+    def parent(self):
+        return self.__parent
+
     @name.setter
-    def name(self, name):
-        if name:
-            self.__name = name
+    def name(self, value):
+        if value and isinstance(value, str):
+            value = re.sub(' +', ' ', value).strip().title()
+            if len(value) > 50:
+                value = input(f'name is larger than 50 -{value}- . Enter new name:')
+            self.__name = value
 
-
+    @parent.setter
+    def parent(self, value):
+        if value and isinstance(value, str):
+            value = re.sub(' +', ' ', value).strip().capitalize()
+            while len(value) > 50:
+                value = input(f'name is larger than 50 -{value}- . Enter new name:')
+            self.__parent = value
 

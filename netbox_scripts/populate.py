@@ -5,9 +5,10 @@ import pynetbox
 from Region import Region
 from Site import Site
 import os
+import re
 
 
-FILE = 'GESTION.xlsx'
+FILE = "C:\\Users\\Polo\\Documents\\CURRO\\repo\\INVENTARIOS\\GESTION.xlsx"
 NETBOX_URL = 'http://netbox.aragon.es'
 
 class NetboxAPITokenNotFound(Exception):
@@ -35,27 +36,42 @@ def create_region(dataf):
 
 
 def create_site(dataf):
-    
+    '''
+    ESTADO no 'BAJA'
+    SEDE no '0'
+    DIRECCIÓN SEDE no "0" ni "vacía"
+    POBLACIÓN no "vacía"
+    PROVINCIA "zaragoza" o "huesca" o "teruel"
+    ACTIVIDAD no "vacía"
+    CARPETA no "vacía"
+    '''
+
     name = dataf['NOMBRE SEDE']
     slug = dataf['CODIGO INMUEBLE']
-    status = dataf['ESTADO']
-    region = dataf['POBLACIÓN'].title()
-    description = dataf['ACTIVIDAD']
+    # status = dataf['ESTADO']
+    region = dataf['POBLACIÓN'].str.title()
+    description = dataf['NOMBRE SEDE']
+    # description = dataf['ACTIVIDAD']
     physical_address = dataf['DIRECCIÓN SEDE']
+    facility = dataf['CODIGO HOSTNAME']
     # contact_name = dataf['']
-    contact_phone = dataf['TELÉFONO FIJO']
+    # contact_phone = dataf['TELÉFONO FIJO']
     # contact_email = dataf['']
-    comments = dataf['TELÉFONO MÓVIL']
+    # comments = ', '.join([dataf['TELÉFONO MÓVIL'], dataf['TELÉFONO FIJO']])
+    cf_criticidad_servicio = dataf['CRITICIDAD SERVICIO']
+    cf_disponibilidad = dataf['DISP.']
+
 
     sites = [
         Site(
             name=str(name),
-            slug=f"{int(slug):04d}",
+            slug=str(slug),
             region={'slug': str(region)},
-            #region=nb.dcim.regions.get(slug=region),
-            physical_address=str(physical_address)
-        ) for name,slug,region,physical_address in zip(
-            name,slug,region,physical_address)
+            physical_address=str(physical_address),
+            description=str(description),
+            facility=str(facility)
+        ) for name,slug,region,physical_address,description,facility in zip(
+            name,slug,region,physical_address, description,facility)
     ]
 
     return sites
@@ -69,78 +85,52 @@ def create_entity(entity: str, dataf) -> Callable:
 
 
 # Return a List of entity objects
-def get_data(entity_name: str, file: TextIO) -> List:
+def get_data(file: TextIO) -> List:
     df = pd.read_excel(file,'Sedes')
     searchfor = ['zaragoza', 'huesca', 'teruel']
     df = df[df.PROVINCIA.notnull()]
     df = df[df['PROVINCIA'].notna()]
-    data = df[df.PROVINCIA.str.lower().str.contains('|'.join(searchfor))]
+    df = df[df.PROVINCIA.str.lower().str.contains('|'.join(searchfor))]
+    df = df[df['CARPETA'].notna()]
+    df = df[df['CARPETA'].notnull()]
 
-    entity = create_entity(entity_name, data)
-    return entity
+    return df
 
 
-def dump_regions(nb):
+def dump_entity(nb, entity: str):
     errors = []
-    failed_regions = []
-    
+    failed_entities = []
+    data = get_data(FILE)
 
-    regions = get_data('region', FILE)
-    # sites = get_data('site', FILE)
+    entities = create_entity(entity, data)
 
     try:
         created = []
-        for region in regions:
-            if region.slug not in created:
-                r = region.get_or_create(nb)
-                created.append(region.slug)
+        for ent in entities:
+            if ent.slug not in created:
+                r = ent.get_or_create(nb)
+                created.append(ent.slug)
                 print(r)
             else:
-                print(f'{region.name} already created....')
+                print(f'{ent.name} already created....')
     except pynetbox.core.query.RequestError as e:
         errors.append(e)
-        failed_regions.append(region.name)
+        failed_entities.append(ent.name)
         pass
 
-    # r = region.get_or_create(nb)
-    # r = region.delete(nb)
-    # r = region.update(nb, description='')
+    # r = ent.get_or_create(nb)
+    # r = ent.delete(nb)
+    # r = ent.update(nb, description='')
 
     print("errors: {}".format(errors))
-    print("failed regions: {}".format(failed_regions))
+    print("failed entities: {}".format(failed_entities))
 
-
-def dump_sites(nb):
-    errors = []
-    failed_sites = []
-    
-    sites = get_data('site', FILE)
-
-    try:
-        created = []
-        for site in sites:
-            if site.slug not in created:
-                r = site.get_or_create(nb)
-                created.append(site.slug)
-                print(r)
-            else:
-                print(f'{site.name} already created....')
-    except pynetbox.core.query.RequestError as e:
-        errors.append(e)
-        failed_sites.append(site.name)
-        pass
-
-    # r = site.get_or_create(nb)
-    # r = site.delete(nb)
-    # r = site.update(nb, description='')
-
-    print("errors: {}".format(errors))
-    print("failed sites: {}".format(failed_sites))
 
 def main():
     nb = load_api()
+    dump_entity(nb, 'site')
     # dump_regions(nb)
-    dump_sites(nb)
+    # dump_sites(nb)
 
 
 if __name__ == "__main__":
