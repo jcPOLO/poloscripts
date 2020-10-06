@@ -5,11 +5,11 @@ import pynetbox
 from Region import Region
 from Site import Site
 import os
-import re
 
 
 FILE = "C:\\Users\\Polo\\Documents\\CURRO\\repo\\INVENTARIOS\\GESTION.xlsx"
 NETBOX_URL = 'http://netbox.aragon.es'
+
 
 class NetboxAPITokenNotFound(Exception):
     pass

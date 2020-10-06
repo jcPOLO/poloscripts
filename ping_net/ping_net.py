@@ -30,7 +30,7 @@ def args():
                 print(f'Usa -[f] [filename]')
                 sys.exit(2)
     else:
-        print(f'Usa -[f] [filename]')
+        print(f'Usa -[f|n] [filename|network] ')
 
 
 def get_nets_from_file(file: str) -> List[str]:
@@ -89,7 +89,6 @@ def main():
     except TypeError:
         print("error")
         pass
-
 
 
 if __name__ == "__main__":
