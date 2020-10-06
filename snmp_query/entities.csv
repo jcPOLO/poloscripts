@@ -1,0 +1,102 @@
+WIC-1ADSL;1 port adsl module
+WIC-1B;1 port bri module
+WIC-1T;1 port serial module
+WIC-1GE-SFP;1 port sfp module
+1MFT-T1/E1;1 port t1/e1 module
+2MFT-T1/E1;2 port t1/e1 module
+2BRI-NT/TE;2 port bri module
+VIC3-2E/M;2 port e/m voice/fax module
+VIC2-2FXO;2 port fxo voice/fax module
+VIC2-4FXO;4 port fxo voice/fax module
+-2FXS;2 port fxs/did voice module
+-3FXS;3 port fxs/did voice module
+-4FXS;4 port fxs/did voice module
+-72FXS:high density port fxs/did voice module
+Power Supply;power supply module
+PWR;power supply module
+POWER;power supply module
+WS-CAC;power supply module
+WS-SUP;6k5 supervisor module
+EHWIC-4ESG;4 port gigabit module
+WS-X6516;6k5 16 port line card
+WS-X6716-10GE;6k5 16 port line card
+WS-X6816-10GE;6k5 16 port line card
+WS-X6724-SFP;6k5 24 port line card
+WS-X6824-SFP;6k5 24 port line card
+WS-X6148A;6k5 48 port line card
+WS-X6548-GE-TX;6k5 48 port line card
+WS-X6748-GE-TX;6k5 48 port line card
+WS-X6848-SFP;6k5 48 port line card
+WS-X6408A-GBIC;6k5 8 port line card
+WS-X6708-10GE;6k5 8 port line card
+ACE10-6500-K9;6k5 application control engine service module
+ACE20-MOD-K9;6k5 application control engine service module
+WS-F6700-CFC;6k5 centralized forwarding card
+WS-X6066-SLB-APC;6k5 content switching module
+WS-F6700-DFC3C;6k5 distributed forwarding card
+WS-F6K-DFC4;6k5 distributed forwarding card
+WS-SVC-FWM-1;6k5 firewall module
+WS-SVC-IDS;6k5 intrusion detection module
+WS-F6K-MSFC2A;6k5 multilayer switch feature card module
+WS-C6000-CL;6k5 clock module
+WS-C6513-CL;6k5 clock module
+WS-C6K-VTT;6k5 voltage termination module
+VS-S720-10G;6k5 vss supervisor card module
+VS-SUP2T-10G;6k5 vss supervisor card module
+VS-F6K-MSFC;6k5 vss multilayer switch feature card module
+EHWIC-D-8ESG-P;8 port gigabit module
+OS66MINIGBIC2;alcatel 2 port module
+ASA-IC-6GE-CU-C;asa 6 port module
+FAN Card;fan module
+FAN-MOD-4HS;fan module
+-E-FAN;6k5 fan module
+Fabric Extender Module;fex module
+GBIC Transceiver 1000BaseLH;gbic 1gb lh
+GBIC_SX;gbic 1gb sx
+GBIC_T;gbic 1gb t
+GBIC_LX;gbic 1gb lx
+PVDM;packet voice digital module
+1000BaseLH;sfp 1gb lh
+1000BASE-LX;sfp 1gb lx
+1000BaseLX;sfp 1gb lx
+1000BaseSX;sfp 1gb sx
+1000BaseT;sfp 1gb t
+CVR-X2-SFP10G;conversor to sfp+ 10gb
+GLC-Sx-MM;sfp 1gb sx
+GLC-SX-MMD;sfp 1gb sx
+GLC-BX-U;sfp 1gb bx
+GLC-EX-SMD;sfp 1gb ex
+GLC-LH-SM;sfp 1gb lh
+GLC-LH-SMD;sfp 1gb lh
+GLC-T;sfp 1gb t
+GLC-TE;sfp 1gb t
+QSFP-40G-SR-BD;qsfp 40gb sr
+SFP-10G-SR;sfp 1gb sr
+SFP-GE-S;sfp 1gb sx
+SFP-10G-SR-S;sfp+ 10gb sr
+SFP-H10GB-ACU10M;sfp+ 10gb twinax
+SFP-H10GB-CU;sfp+ 10gb twinax
+X2-10GB-LR;transceiver 10gb lr
+X2-10GB-SR;transceiver 10gb sr
+F6K-PFC;6k5 policy feature card
+ProCurve;parent
+Clock;clock module
+PICOLIGHT;transceiver
+FET-10G;dac fet-10gb
+Transceiver;transceiver
+Port;transceiver
+Mother;motherboard module
+8x10G Uplink Module;9k 8 port module
+StackPort;stack port module
+00Mb/s;transceiver
+PAC-650W;power supply module
+Interface Daughter Card;port module
+Not Present;not present
+-Port 10GBase LAN/WAN-XFP;port module
+-Port 10GBase LAN/WAN-XFP;sfp 1gb sx
+SX;sfp 1gb sx
+GE T;sfp 1gb t
+Stacking Module;stack port module
+AC power supply;power supply module
+Processing Unit A5;x8 processing module
+1000BASE-ZX;sfp 1gb zx

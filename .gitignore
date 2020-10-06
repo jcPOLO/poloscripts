@@ -5,5 +5,7 @@ nornir-scripts/
 __pycache__/
 ~$*
 *.csv
+!entities.csv
+!models.csv
 *.xlsx
 .~lock*
