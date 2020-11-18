@@ -390,9 +390,9 @@ def get_facts(_ip_address_):
     community, connection = recover_saved_facts(_ip_address_)
     s.get_connection(connection)
     if s.get_hostname(community) != '-':
-        s.get_location()
+        #s.get_location()
         s.get_platform()
-        s.get_devices()
+        #s.get_devices()
         facts = []
         for device in s.devices:
             fact = str(s.ip) + ',' \
@@ -409,6 +409,7 @@ def get_facts(_ip_address_):
             fact = fact.replace('\n', '')
             facts.append(fact)
         save_to_file(s.ip, facts)
+        return facts
 
 
 def main():
@@ -433,7 +434,8 @@ def main():
     else:
         print(f'-[i|f] [ip_address|filename]')
     if ip_address:
-        get_facts(ip_address)
+        facts = get_facts(ip_address.strip())
+        print(facts)
     elif filename:
         f = open(filename)
         i = 0
