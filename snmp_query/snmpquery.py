@@ -8,10 +8,10 @@ from multiprocessing import Process
 
 from pysnmp.hlapi import *
 
-
 class SnmpQuery(object):
 
     def __init__(self, ip, timeout=1):
+    
         self.ip = ip
         self.community = ''
         self.timeout = timeout
@@ -131,7 +131,7 @@ class SnmpQuery(object):
             # ports = {"t": 23, "s": 22}
             for port, value in ports.items():
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(2.0)
+                s.settimeout(1.0)
                 result = s.connect_ex((self.ip, int(value)))
                 if result == 0:
                     self.connectivity = self.connectivity + str(port)
