@@ -11,7 +11,7 @@ from pysnmp.hlapi import *
 class SnmpQuery(object):
 
     def __init__(self, ip, timeout=1):
-    
+
         self.ip = ip
         self.community = ''
         self.timeout = timeout
@@ -67,7 +67,7 @@ class SnmpQuery(object):
             counter += 1
         return t
 
-    def get_hostname(self, _community):
+    def get_hostname(self):
         communities = [
             'C0mun1c4c10n3s',
             'salud145_RO',
@@ -91,10 +91,7 @@ class SnmpQuery(object):
                 self.hostname = temp[0]
         i = 1
         while self.hostname == '' and i < len(communities):
-            if _community:
-                self.community = _community
-            else:
-                self.community = communities[i]
+            self.community = communities[i]
             temp = self.get_oid('1.3.6.1.2.1.1.5.0')
             if temp == "SNMP_error":
                 self.hostname = ""
@@ -111,14 +108,13 @@ class SnmpQuery(object):
             self.platform = '-'
         self.hostname = self.strfilter(self.hostname)
 
-    def get_connection(self, _connection):
-        self.connectivity = _connection
+    def get_connection(self):
         if self.connectivity == '':
             ports = {"t": 23, "s": 22, "w": 80, "+": 443}
             for key, port_number in ports.items():
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(1.0)
-                result = s.connect_ex(self.ip, port_number)
+                result = s.connect_ex((self.ip, port_number))
                 if result == 0:
                     self.connectivity = self.connectivity + str(key)
                 s.close()
@@ -221,17 +217,17 @@ def save_to_file(_ip_address_, _facts_):
 def get_facts(_ip_address_):
     s = SnmpQuery(_ip_address_)
     s.get_connection()
-    if s.get_hostname(community) != '-':
+    if s.get_hostname() != '-':
         s.get_platform()
         facts = []
         fact = str(s.ip) + ',' \
                 + str(s.connectivity) + ',' \
                 + str(s.platform) + ',' \
-                + str(s.hostname) + ',' \
+                + str(s.hostname) + ','
         fact = fact.replace('\n', '')
         facts.append(fact)
         # save_to_file(s.ip, facts)
-        pinrt(facts)
+        print(facts)
         return(facts)
 
 
