@@ -19,6 +19,7 @@ class SnmpQuery(object):
         self.connectivity = ''
         self.platform = ''
         self.defaultroute = ''
+        self.mask = ''
 
     def get_oid(self, oid):
         error_indication, error_status, error_index, var_binds = next(
@@ -108,6 +109,7 @@ class SnmpQuery(object):
             self.connectivity = '-'
             self.platform = '-'
         self.hostname = self.strfilter(self.hostname)
+        return self.hostname
 
     def get_connection(self):
         if self.connectivity == '':
@@ -119,6 +121,7 @@ class SnmpQuery(object):
                 if result == 0:
                     self.connectivity = self.connectivity + str(key)
                 s.close()
+        return self.connectivity
 
     def get_platform(self):
         if self.platform == '':
@@ -151,17 +154,24 @@ class SnmpQuery(object):
                 if pattern in temp:
                     if self.platform == '':
                         self.platform = self.strfilter(vendor)
+        return self.platform
 
     def get_defaultroute(self):
         if self.defaultroute == '':
-            print(self.platform)
             if "huawei" in self.platform:
                 temp = self.get_oid('iso.3.6.1.2.1.4.21.1.7.0.0.0.0')
             if "ios" in self.platform:
                 temp = self.get_oid('iso.3.6.1.2.1.16.19.12.0')
-                print(temp)
-            #result = temp.replace("\r\n", " ").split()[-1]
-            #self.defaultroute = result
+            result = temp.replace("\r\n", " ").split()[-1]
+            self.defaultroute = result
+            return self.defaultroute
+
+    def get_mask(self):
+        if self.mask == '':
+            temp = self.get_oid(f'iso.3.6.1.2.1.4.20.1.3.{self.ip}')
+            result = temp.replace("\r\n", " ").split()[-1]
+            self.mask = result
+            return self.mask
 
     @staticmethod
     def strfilter(string=''):
@@ -228,15 +238,17 @@ def save_to_file(_ip_address_, _facts_):
 def get_facts(_ip_address_):
     s = SnmpQuery(_ip_address_)
     s.get_connection()
-    if s.get_hostname() != '-':
-        s.get_platform()
-        s.get_defaultroute()
+    if s.get_hostname() != '-' and s.get_platform():
+        s.get_mask()
+        if not s.get_defaultroute():
+            print('cannot get default route for ', _ip_address_)
+            exit()
         fact = str(s.ip) + ',' \
                 + str(s.connectivity) + ',' \
                 + str(s.platform) + ',' \
                 + str(s.hostname) + ',' \
-                + str(s.defaultroute)
-
+                + str(s.defaultroute) + ',' \
+                + str(s.mask)
         print(fact)
 
 def main():
@@ -260,6 +272,7 @@ def main():
                 sys.exit(2)
     else:
         print(f'-[i|f] [ip_address|filename]')
+    print('hostname,is_telnet,platform,host,current_dg,ip,new_dg,old_mask')
     if ip_address:
         facts = get_facts(ip_address.strip())
 
