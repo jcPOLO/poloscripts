@@ -18,6 +18,7 @@ class SnmpQuery(object):
         self.hostname = ''
         self.connectivity = ''
         self.platform = ''
+        self.defaultroute = ''
 
     def get_oid(self, oid):
         error_indication, error_status, error_index, var_binds = next(
@@ -151,6 +152,16 @@ class SnmpQuery(object):
                     if self.platform == '':
                         self.platform = self.strfilter(vendor)
 
+    def get_defaultroute(self):
+        if self.defaultroute == '':
+            print(self.platform)
+            if "huawei" in self.platform:
+                temp = self.get_oid('iso.3.6.1.2.1.4.21.1.7.0.0.0.0')
+            if "ios" in self.platform:
+                temp = self.get_oid('iso.3.6.1.2.1.16.19.12.0')
+                print(temp)
+            #result = temp.replace("\r\n", " ").split()[-1]
+            #self.defaultroute = result
 
     @staticmethod
     def strfilter(string=''):
@@ -219,17 +230,14 @@ def get_facts(_ip_address_):
     s.get_connection()
     if s.get_hostname() != '-':
         s.get_platform()
-        facts = []
+        s.get_defaultroute()
         fact = str(s.ip) + ',' \
                 + str(s.connectivity) + ',' \
                 + str(s.platform) + ',' \
-                + str(s.hostname) + ','
-        fact = fact.replace('\n', '')
-        facts.append(fact)
-        # save_to_file(s.ip, facts)
-        print(facts)
-        return(facts)
+                + str(s.hostname) + ',' \
+                + str(s.defaultroute)
 
+        print(fact)
 
 def main():
     try:
