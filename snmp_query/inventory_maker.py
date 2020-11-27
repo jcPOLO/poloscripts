@@ -247,8 +247,7 @@ def get_facts(_ip_address_):
                 + str(s.connectivity) + ',' \
                 + str(s.platform) + ',' \
                 + str(s.hostname) + ',' \
-                + str(s.defaultroute) + ',' \
-                + str(s.mask)
+                + str(s.defaultroute) + ','
         print(fact)
 
 def main():
