@@ -272,7 +272,7 @@ def main():
                 sys.exit(2)
     else:
         print(f'-[i|f] [ip_address|filename]')
-    print('hostname,is_telnet,platform,host,current_dg,ip,new_dg,old_mask')
+    print('hostname,is_telnet,platform,host,current_dg,ip,new_dg,mask,site_code')
     if ip_address:
         facts = get_facts(ip_address.strip())
 
