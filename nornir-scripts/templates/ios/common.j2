@@ -1,0 +1,15 @@
+!
+tacacs-server timeout 1
+!
+enable secret {{ ini_vars['console_password'] }}
+!
+cdp run
+!
+lldp run
+!
+username {{ ini_vars['user_lote7'] }} privilege 15 secret {{ ini_vars['user_lote7_password'] }}
+username {{ ini_vars['user_lote1'] }} privilege 15 secret {{ ini_vars['user_lote1_password'] }}
+!
+line vty 0 4
+ no access-class 11 in
+!

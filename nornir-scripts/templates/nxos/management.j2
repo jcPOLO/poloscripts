@@ -1,0 +1,14 @@
+!
+vlan {{ ini_vars['management_vlan_id'] }}
+ name GestRED
+!
+{% for interface in nr.host['interfaces'] %}
+interface {{ interface['interface'] }}
+ switchport trunk allowed vlan add {{ ini_vars['management_vlan_id'] }}
+{% endfor %}
+!
+int vlan{{ ini_vars['management_vlan_id'] }}
+ description Vlan{{ ini_vars['management_vlan_id'] }} configurada con Nornir
+ ip address {{ nr.host['ip'] }} {{ nr.host['mask'] }}
+end
+!

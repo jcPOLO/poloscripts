@@ -1,0 +1,7 @@
+!
+hostname {{ nr.host['hostname'] }}
+!
+ip domain-name {{ ini_vars['dns_domain'] }}
+!
+crypto key generate rsa modulus 2048
+!

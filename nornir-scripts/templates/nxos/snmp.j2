@@ -1,0 +1,13 @@
+!
+no ip access-list 60
+no ip access-list SNMP
+!
+ip access-list SNMP
+ remark Equipos con acceso SNMP rw
+ permit ip {{ ini_vars['snmp_ip'] }} 0.0.0.0 any
+ permit ip {{ ini_vars['nagios_ip'] }} 0.0.0.0 any
+ permit ip 192.168.150.192 0.0.0.31 any
+!
+snmp-server community {{ ini_vars['snmp_w_password'] }} rw
+snmp-server community {{ ini_vars['snmp_w_password'] }} use-ipv4acl SNMP
+!

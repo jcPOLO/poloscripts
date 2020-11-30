@@ -1,0 +1,19 @@
+#
+und acl number 2060
+#
+snmp-agent community write {{ ini_vars['snmp_w_password'] }} acl 2060
+#
+acl number 2060
+ description Equipos con acceso SNMP rw
+ rule 10 permit source {{ ini_vars['snmp_ip'] }} 0
+ rule 20 permit source {{ ini_vars['nagios_ip'] }} 0
+ rule 30 permit source 192.168.150.192 0.0.0.31
+#
+snmp-agent community read C0mun1c4c10n3s mib-view iso-view acl 2050
+snmp-agent community write C0mun1c4c10n3s mib-view iso-view acl 2060
+snmp-agent sys-info version v2c
+undo snmp-agent sys-info version v3
+snmp-agent mib-view included iso-view iso
+#
+und acl number 2020
+#

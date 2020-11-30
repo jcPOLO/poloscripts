@@ -1,0 +1,5 @@
+!
+ip route 0.0.0.0 0.0.0.0 {{ nr.host['current_dg'] }} 200
+ip default-gateway {{ nr.host['new_dg'] }}
+ip route 0.0.0.0 0.0.0.0 {{ nr.host['new_dg'] }}
+!

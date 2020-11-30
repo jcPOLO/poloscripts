@@ -1,0 +1,10 @@
+#
+hwtacacs-server template acs
+ hwtacacs-server authentication {{ ini_vars['tacacs1_ip_gestred'] }}
+ hwtacacs-server authentication {{ ini_vars['tacacs2_ip_gestred'] }} secondary
+ hwtacacs-server authorization {{ ini_vars['tacacs1_ip_gestred'] }}
+ hwtacacs-server authorization {{ ini_vars['tacacs2_ip_gestred'] }} secondary
+ hwtacacs-server source-ip {{ nr.host['ip'] }}
+ hwtacacs-server shared-key {{ ini_vars['tacacs_key'] }}
+ hwtacacs-server timer response-timeout 1
+#

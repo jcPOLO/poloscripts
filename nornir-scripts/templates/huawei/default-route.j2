@@ -1,0 +1,4 @@
+#
+ip route-static 0.0.0.0 0.0.0.0 {{ nr.host['current_dg'] }} preference 200
+ip route-static 0.0.0.0 0.0.0.0 {{ nr.host['new_dg'] }}
+#

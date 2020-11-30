@@ -1,0 +1,22 @@
+! output = send_command('show ip ssh')
+!     if 'version 1.' is in output:
+!
+! conf t
+!
+hostname {{ nr.host['hostname'] }}
+!
+ip domain-name {{ ini_vars['dns_domain'] }}
+!
+crypto key zeroize rsa
+! yes
+crypto key generate rsa modulus 2048
+!
+! o crypto key generate rsa
+! 2024
+!
+!
+ip ssh version 2
+!
+line vty 0 4
+ transport input all
+!
