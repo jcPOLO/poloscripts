@@ -6,20 +6,22 @@ import os, sys
 class Filter(object):
 
     platforms = ['ios', 'huawei']
+    # keys = ['hostname', 'is_telnet', 'platform', 'host', 'ip', 'mask', 'new_dg', 'current_dg', 'site_code']
+    keys = ['current_dg', 'ip', 'mask', 'new_dg', 'role', 'site_code']
 
     def __init__(self, nr, filter_parameters={}) -> None:
 
         self.choices = {
             "1": self.by_platform,
             "2": self.by_hostname,
-            "3": self.by_ip,
-            "4": self.by_host,
-            "5": self.by_site_code,
+            #"3": self.by_host,
+            "4": self.by_field,
             "s": self.show,
             "z": self.clear,
             "e": self.exit,
 
         }
+
         self.initial_nr = nr
         self.nr = nr
         filter_parameters = filter_parameters or {}
@@ -34,13 +36,12 @@ class Filter(object):
 
            1. Platform
            2. IP
-           3. New IP
-           4. Hostname
-           5. Site code
+           # 3. Hostname
+           4. Other fields...
 
            -------------------------------------------------------------------------------
 
-           s. Show selection       z. Clear selections
+           s. Show selection       z. Clear selections   
 
            e. Exit
 
@@ -112,34 +113,48 @@ class Filter(object):
             msg = f'All devices selected.'
             self.run(msg)
 
-    def by_ip(self):
-        pass
+    # def by_site_code(self):
+    #     nr = self.nr
+    #
+    #     sites = set()
+    #
+    #     for host in nr.inventory.hosts.values():
+    #         sites.add(host['site_code'])
+    #
+    #     site = input(f"Site to filter by: - {', '.join(sites)}:").lower()
+    #
+    #     if site:
+    #         devices = nr.filter(F(site=site))
+    #         self.nr = devices
+    #         msg = f'Filtered by site: {site}'
+    #         self.run(msg)
+    #
+    #     else:
+    #         msg = f'All sites selected.'
+    #         self.run(msg)
 
-    def by_host(self):
-        pass
+    def by_field(self):
+        field = input(f"Field to filter by: - {', '.join(self.keys)}:").lower()
 
-    def by_site_code(self):
-        nr = self.nr
+        if field in self.keys:
+            nr = self.nr
 
-        sites = set()
+            values = set()
 
-        for host in nr.inventory.hosts.values():
-            sites.add(host['site_code'])
+            for host in nr.inventory.hosts.values():
+                values.add(host[field])
 
-        site = input(f"Platform to filter by: - {', '.join(sites)}:").lower()
+            value = input(f"{field} to filter by: - {', '.join(values)}:").lower()
 
-        if site in nr.inventory.groups:
-            devices = nr.filter(F(site=site))
-            self.nr = devices
-            msg = f'Filtered by site: {site}'
-            self.run(msg)
+            if value in values:
+                devices = nr.filter(F(**{field: str(value)}))
+                self.nr = devices
+                msg = f'Filtered by {field}: {value}'
+                self.run(msg)
 
         else:
-            msg = f'All sites selected.'
+            msg = f'All devices selected.'
             self.run(msg)
-
-    def by_field(self, field):
-        pass
 
     def show_filtering_options(self, nr, fields={}):
             if fields:
