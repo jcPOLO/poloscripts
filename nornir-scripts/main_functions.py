@@ -72,36 +72,3 @@ def trunk_description(task: Task) -> None:
     interfaces = process_data_trunk(data)
     task.host['interfaces']: Dict[str, str] = get_interface_description(
         interfaces, task)
-
-
-def filter_inventory(nr: Nornir) -> Nornir:
-    devices = nr
-    platforms, sites, models = (set() for i in range(3))
-
-    for host in nr.inventory.hosts.values():
-        platforms.add(host.platform)
-        sites.add(host['site_code'])
-        # models.add(host['model'])
-
-    # platforms = {host.platform for host in nr.inventory.hosts.values()}
-    # sites = {host['site_code'] for host in nr.inventory.hosts.values()}
-    # models = {host['model'] for host in nr.inventory.hosts.values()}
-
-    platform = input(f"Platform to filter - {', '.join(platforms)}:").lower()
-    site = str(input(f"Cod Inm - {', '.join(sites)}:"))
-    # model = str(input(f"Cod Inm - {', '.join(models)}:"))
-
-    if platform in platforms:
-        print(f'Filter by platform: { platform }')
-        devices = nr.filter(F(platform=platform))
-    else:
-        print(f'All platforms selected.')
-    if site in nr.inventory.groups:
-        print(f'Filter by site: { site }')
-        devices = nr.filter(F(site=site))
-    else:
-        print(f'All sites selected.')
-    try:
-        return devices
-    except ValueError:
-        print(f'Error: no filter applied')

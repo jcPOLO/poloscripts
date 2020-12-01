@@ -1,9 +1,10 @@
 from nornir import InitNornir
 from nornir.plugins.functions.text import print_result
 import getpass
-from main_functions import filter_inventory, make_magic
+from main_functions import make_magic
 from models.Menu import Menu, Template
 from models.Bootstrap import Bootstrap
+from models.Filter import Filter
 
 
 CFG_FILE = 'config.yaml'
@@ -17,7 +18,7 @@ def main() -> None:
     # creates hosts.yaml from csv file, ini file could be passed as arg, by default .global.ini
     bootstrap = Bootstrap()
 
-    # configparser object
+    # configparser object, similar to dict object
     ini_vars = bootstrap.get_ini_vars()
 
     # initialize Nornir object
@@ -26,14 +27,15 @@ def main() -> None:
     nr.inventory.defaults.password = password
     nr.inventory.defaults.username = username
 
-    devices = filter_inventory(nr)
+    filter_obj = Filter(nr)
+    devices = filter_obj.nr
 
     # show the main menu
-    menu = Menu()
-    t = menu.run()
+    menu_obj = Menu()
+    menu = menu_obj.run()
 
-    if isinstance(t, Template):
-        templates = t.templates
+    if isinstance(menu, Template):
+        templates = menu.templates
     else:
         templates = 'save_config'
 
