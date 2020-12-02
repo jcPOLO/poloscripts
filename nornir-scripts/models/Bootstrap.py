@@ -7,7 +7,7 @@ from typing import Dict
 
 class Bootstrap(object):
 
-    def __init__(self, ini_file='.global.ini', csv_file='inventory.csv', **kwargs):
+    def __init__(self, ini_file='../.global.ini', csv_file='inventory.csv', **kwargs):
 
         self.ini_file = ini_file
         self.csv_file = csv_file

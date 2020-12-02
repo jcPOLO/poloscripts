@@ -90,7 +90,7 @@ class Filter(object):
             msg = f'Filtered by platform: {platform}'
             self.run(msg)
         else:
-            msg = f'All platforms selected.'
+            msg = f'All platforms shown selected.'
             self.run(msg)
 
     def by_hostname(self):
@@ -110,7 +110,7 @@ class Filter(object):
             self.run(msg)
 
         else:
-            msg = f'All devices selected.'
+            msg = f'All devices shown selected.'
             self.run(msg)
 
     # def by_site_code(self):
@@ -153,7 +153,7 @@ class Filter(object):
                 self.run(msg)
 
         else:
-            msg = f'All devices selected.'
+            msg = f'All devices shown selected.'
             self.run(msg)
 
     def show_filtering_options(self, nr, fields={}):
