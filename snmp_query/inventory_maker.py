@@ -249,8 +249,8 @@ def get_facts(_ip_address_, data):
             + str(s.platform) + ',' \
             + str(s.hostname) + ',' \
             + str(s.default_route) + ',' \
-            + data['new_dg'] + \
-            + data['new_mask'] + \
+            + data['new_dg'] + ',' \
+            + data['new_mask'] + ',' \
             + data['site_code']
         print(fact)
 
