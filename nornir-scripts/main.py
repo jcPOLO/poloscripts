@@ -12,8 +12,7 @@ EXCLUDED_VLANS = [1, 1002, 1003, 1004, 1005]
 
 
 def main() -> None:
-    username = input("Username:")
-    password = getpass.getpass()
+
 
     # creates hosts.yaml from csv file, ini file could be passed as arg, by default .global.ini
     bootstrap = Bootstrap()
@@ -23,9 +22,6 @@ def main() -> None:
 
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
-
-    nr.inventory.defaults.password = password
-    nr.inventory.defaults.username = username
 
     filter_obj = Filter(nr)
     devices = filter_obj.nr
@@ -39,10 +35,18 @@ def main() -> None:
     else:
         templates = 'save_config'
 
+    username = input("\nUsername:")
+    password = getpass.getpass()
+
+    nr.inventory.defaults.password = password
+    nr.inventory.defaults.username = username
+
     # Python program to show time by perf_counter()
     from time import perf_counter
     # Start the stopwatch / counter
     t1_start = perf_counter()
+
+    print('----------- LOADING -----------')
 
     result = devices.run(task=make_magic,
                          name=f'CONTAINER TASK',

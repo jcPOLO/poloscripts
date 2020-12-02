@@ -14,8 +14,8 @@ class Filter(object):
         self.choices = {
             "1": self.by_platform,
             "2": self.by_hostname,
-            #"3": self.by_host,
-            "4": self.by_field,
+            "3": self.by_field,
+            # "4": self.by_host,
             "s": self.show,
             "z": self.clear,
             "e": self.exit,
@@ -36,12 +36,11 @@ class Filter(object):
 
            1. Platform
            2. IP
-           # 3. Hostname
-           4. Other fields...
+           3. Other fields...
 
            -------------------------------------------------------------------------------
 
-           s. Show selection       z. Clear selections   
+           ENTER to continue      s. Show selection       z. Clear selections   
 
            e. Exit
 
