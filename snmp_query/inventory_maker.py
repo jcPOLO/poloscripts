@@ -278,15 +278,13 @@ def main():
         get_facts(ip_address.strip())
 
     elif filename:
-        f = open(filename)
-        i = 0
         inventory = []
         processes = []
 
-        for line in f:
-            line = line.replace("\n", "")
-            inventory.append(line)
-            i += 1
+        with open(filename, 'r') as f:
+            for line in f.readlines():
+                if len(line.strip()) > 0:
+                    inventory.append(line.strip())
         for host in inventory:
             proc = Process(target=get_facts, args=(host,))
             processes.append(proc)
