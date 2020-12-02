@@ -236,7 +236,7 @@ def save_to_file(_ip_address_, _facts_):
                 f.write(fact_to_write)
 
 
-def get_facts(_ip_address_):
+def get_facts(_ip_address_, data):
     s = SnmpQuery(_ip_address_)
     s.get_connection()
     if s.get_hostname() != '-' and s.get_platform():
@@ -248,7 +248,10 @@ def get_facts(_ip_address_):
             + str(s.connectivity) + ',' \
             + str(s.platform) + ',' \
             + str(s.hostname) + ',' \
-            + str(s.default_route) + ','
+            + str(s.default_route) + ',' \
+            + data['new_dg'] + \
+            + data['new_mask'] + \
+            + data['site_code']
         print(fact)
 
 
@@ -273,9 +276,15 @@ def main():
                 sys.exit(2)
     else:
         print(f'-[i|f] [ip_address|filename]')
+
+    data = {}
+    data['new_dg'] = input("Nuevo default gateway - IP vlan1099 del 9500/9300: ")
+    data['new_mask'] = input("Network Mask de la vlan1099: ")
+    data['site_code'] = input("Codigo inmueble del sitio: ")
+
     print('hostname,is_telnet,platform,host,current_dg,ip,new_dg,mask,site_code')
     if ip_address:
-        get_facts(ip_address.strip())
+        get_facts(ip_address.strip(), data)
 
     elif filename:
         inventory = []
@@ -286,7 +295,7 @@ def main():
                 if len(line.strip()) > 0:
                     inventory.append(line.strip())
         for host in inventory:
-            proc = Process(target=get_facts, args=(host,))
+            proc = Process(target=get_facts, args=(host, data))
             processes.append(proc)
             proc.start()
         for p in processes:
