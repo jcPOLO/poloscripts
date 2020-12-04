@@ -244,13 +244,14 @@ def get_facts(_ip_address_, data):
         if not s.get_default_route():
             print('cannot get default route for ', _ip_address_)
             exit()
-        fact = str(s.ip) + ',' \
+        fact = ',' \
+            + str(s.ip) + ',' \
             + str(s.connectivity) + ',' \
             + str(s.platform) + ',' \
             + str(s.hostname) + ',' \
             + str(s.default_route) + ',' \
-            + data['new_dg'] + \
-            + data['new_mask'] + \
+            + data['new_dg'] + ',' \
+            + data['new_mask'] + ',' \
             + data['site_code']
         print(fact)
 
@@ -282,7 +283,7 @@ def main():
     data['new_mask'] = input("Network Mask de la vlan1099: ")
     data['site_code'] = input("Codigo inmueble del sitio: ")
 
-    print('hostname,is_telnet,platform,host,current_dg,ip,new_dg,mask,site_code')
+    print('ip,hostname,is_telnet,platform,host,current_dg,new_dg,mask,site_code')
     if ip_address:
         get_facts(ip_address.strip(), data)
 
