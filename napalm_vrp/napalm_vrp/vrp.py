@@ -1087,7 +1087,39 @@ class VRPDriver(NetworkDriver):
                 }
             }
         """
-        raise NotImplementedError
+        # default values.
+        interface_ip_dict = {}
+        interface = None
+        ip_address = None
+        ip_dict = {}
+
+        # Regex interfaces
+        RE_QW_INTERFACE = r"(?P<interface>\w+\d+.*) current state"
+        RE_QW_IP = r"Internet Address is\s+(?P<ip_address>\d+.\d+.\d+.\d+)\/(?P<prefix_length>\d+)"
+
+        # obtain output from device - ipv6 not implemented
+        command = "display ip interface"
+        output = self.device.send_command(command)
+
+        if not output:
+            return {}
+        for line in output.splitlines():
+            search_interface = re.search(RE_QW_INTERFACE, line)
+            search_ip = re.search(RE_QW_IP, line)
+
+            if search_interface is not None:
+                interface = search_interface.group('interface').strip()
+            if search_ip is not None:
+                ip_address = search_ip.group('ip_address').strip()
+                prefix_length = int(search_ip.group('prefix_length').strip())
+            if interface is not None and ip_address is not None:
+                ip_dict[ip_address] = { 'prefix_length': prefix_length }
+                interface_ip_dict[interface] = { "ipv4": ip_dict }
+                interface = None
+                ip_address = None
+                ip_dict = {}
+
+        return interface_ip_dict
 
     def get_mac_address_table(self):
 
