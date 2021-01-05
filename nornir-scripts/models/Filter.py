@@ -14,10 +14,10 @@ class Filter(object):
         self.choices = {
             "1": self.by_platform,
             "2": self.by_hostname,
-            "3": self.by_field,
-            # "4": self.by_host,
-            "s": self.show,
+            "3": self.by_host,
+            "4": self.by_field,
             "z": self.clear,
+            "s": self.show,
             "e": self.exit,
 
         }
@@ -36,11 +36,12 @@ class Filter(object):
 
            1. Platform
            2. IP
-           3. Other fields...
+           3. By hostname
+           4. Other fields...
 
            -------------------------------------------------------------------------------
 
-           ENTER to continue      s. Show selection       z. Clear selections   
+           ENTER to continue      s. Show selection       z. Clear selections
 
            e. Exit
 
@@ -131,6 +132,27 @@ class Filter(object):
     #     else:
     #         msg = f'All sites selected.'
     #         self.run(msg)
+
+    def by_host(self):
+        nr = self.nr
+
+        hostnames = set()
+
+        for host in nr.inventory.hosts.values():
+            hostnames.add(host.name)
+
+        hostname = input(f"IP to filter by: - {', '.join(hostnames)}:")
+        hostname_list = hostname.split(',')
+        hostname_list = list(filter(None, [host.strip() for host in hostname_list]))
+
+        devices = nr.filter(filter_func=lambda h: h.name in hostname_list)
+        self.nr = devices
+        msg = f'Filtered by current device name: {hostname_list}'
+        self.run(msg)
+
+        if not devices:
+            msg = f'All devices shown selected.'
+            self.run(msg)
 
     def by_field(self):
         field = input(f"Field to filter by: - {', '.join(self.keys)}:").lower()

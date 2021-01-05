@@ -72,6 +72,9 @@ def main() -> None:
         --------------------------------------
         """
         )
+        retry = input("Do you want to retry tasks on failed hosts?[y/n]")
+        if retry is 'y':
+            print_result(result)
 
     t1_stop = perf_counter()
 
