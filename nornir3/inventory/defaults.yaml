@@ -1,0 +1,7 @@
+---
+port: 22
+username: username
+password: password
+data:
+  type: network_device
+

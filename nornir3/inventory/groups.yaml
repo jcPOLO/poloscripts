@@ -1,0 +1,31 @@
+---
+global:
+  data:
+    domain: aragon.es
+
+ios:
+  connection_options:
+    netmiko:
+      extras: {}
+
+nxos:
+  connection_options:
+    netmiko:
+      extras: {}
+
+huawei:
+  connection_options:
+    netmiko:
+      extras: {}
+
+ios_telnet:
+  connection_options:
+    netmiko:
+      extras:
+        device_type: 'cisco_ios_telnet'
+    napalm:
+      extras:
+        optional_args:
+          transport: 'telnet'
+
+0094: {}

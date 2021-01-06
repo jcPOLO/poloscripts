@@ -1,0 +1,24 @@
+#
+ info-center loghost {{ ini_vars['syslog_ip'] }}
+ info-center logbuffer channel 2
+ info-center timestamp debugging format-date
+ info-center timestamp log format-date
+#
+ lldp enable
+#
+ vlan {{ ini_vars['management_vlan_id'] }}
+  description GestRED
+#
+{% for interface in trunks %}
+interface {{ interface }}
+ port trunk allow-pass vlan {{ ini_vars['management_vlan_id'] }}
+ quit
+{% endfor %}
+#
+interface Vlanif{{ ini_vars['management_vlan_id'] }}
+ description CONFIGURADO CON NORNIR 5.0
+ ip address {{ nr.host['ip'] }} {{ nr.host['mask'] }}
+#
+ntp-service unicast-server {{ ini_vars['ntp1_ip'] }} preference
+ntp-service unicast-server {{ ini_vars['ntp2_ip'] }}
+#

@@ -1,0 +1,25 @@
+PRUEBAS_CCM10:
+  data:
+    current_dg: ff22f
+    ip: 192.168.233.234
+    mask: 255.255.255.255
+    new_dg: h.h.h.3h
+    role: {}
+    site_code: '0001'
+  groups:
+  - huawei
+  hostname: 1.43.5.233
+  platform: huawei
+PRUEBAS_COMS:
+  data:
+    current_dg: ff22f
+    ip: 192.168.233.233
+    mask: 255.255.255.255
+    new_dg: h.h.h.12h
+    role: {}
+    site_code: '0001'
+  groups:
+  - ios_telnet
+  hostname: 1.43.5.235
+  platform: ios
+  port: 23

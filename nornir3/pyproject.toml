@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "nornir3"
+version = "0.1.0"
+description = "Scripts to manage devices."
+authors = ["jcPOLO <jcpologonzalez@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+nornir = "^3.0.0"
+nornir-netbox = "^0.2.0"
+nornir-netmiko = "^0.1.1"
+nornir-jinja2 = "^0.1.1"
+nornir-utils = "^0.1.1"
+nornir-napalm = "^0.1.1"
+
+[tool.poetry.dev-dependencies]
+ipdb = "^0.13.4"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
