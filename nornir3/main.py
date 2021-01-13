@@ -5,7 +5,7 @@ from main_functions import make_magic
 from models.Menu import Menu, Template
 from models.Bootstrap import Bootstrap
 from models.Filter import Filter
-
+from tqdm import tqdm
 
 CFG_FILE = 'config.yaml'
 EXCLUDED_VLANS = [1, 1002, 1003, 1004, 1005]
@@ -38,8 +38,8 @@ def main() -> None:
     username = input("\nUsername:")
     password = getpass.getpass()
 
-    nr.inventory.defaults.password = password
-    nr.inventory.defaults.username = username
+    devices.inventory.defaults.password = password
+    devices.inventory.defaults.username = username
 
     # Python program to show time by perf_counter()
     from time import perf_counter
@@ -48,14 +48,27 @@ def main() -> None:
 
     print('----------- LOADING -----------')
 
-    result = devices.run(task=make_magic,
-                         name=f'CONTAINER TASK',
-                         templates=templates,
-                         ini_vars=ini_vars
-                         )
+    with tqdm(
+        total=len(devices.inventory.hosts), desc='applying config',
+    ) as make_magic_bar:
+        with tqdm(
+            total=len(devices.inventory.hosts), desc='writing config',
+        ) as get_config_bar:
+            with tqdm(
+                total=len(devices.inventory.hosts), desc='making backup',
+            ) as backup_config_bar:
+                result = devices.run(task=make_magic,
+                                    name=f'CONTAINER TASK',
+                                    templates=templates,
+                                    ini_vars=ini_vars,
+                                    make_magic_bar=make_magic_bar,
+                                    get_config_bar=get_config_bar,
+                                    backup_config_bar=backup_config_bar
+                                    )
 
-    print_result(result)
+        print_result(result)
 
+    t1_stop = perf_counter()
     if result.failed_hosts:
         print(
             """
@@ -64,8 +77,9 @@ def main() -> None:
         """
         )
         for host in result.failed_hosts:
-            print(f'Host: {host}')
-            print(f'|__{result.failed_hosts[host].exception.__class__.__name__}')
+            print(f'Host: \x1b[1;31;40m{host} {devices.inventory.hosts[host].hostname}\x1b[0m')
+            print(f'|_Error: \x1b[0;31;40m{result[host][1].exception}\x1b[0m')
+            print(f'|_Task: {result.failed_hosts[host]}')
 
         print(
             """
@@ -76,7 +90,6 @@ def main() -> None:
         if retry is 'y':
             print_result(result)
 
-    t1_stop = perf_counter()
 
     elapsed_time = t1_stop - t1_start
     print("Elapsed time during the whole program in seconds:",

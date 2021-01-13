@@ -8,4 +8,4 @@ inventory:
 runner:
   plugin: threaded
   options:
-    num_workers: 1
+    num_workers: 100

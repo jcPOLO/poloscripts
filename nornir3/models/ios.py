@@ -1,4 +1,5 @@
 from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config
+from nornir_napalm.plugins.tasks import napalm_get
 from nornir.core import Task
 from typing import List, Dict
 import logging
@@ -7,15 +8,12 @@ from nornir.core.exceptions import NornirSubTaskError
 
 
 def get_config(task: Task) -> str:
-    try:
-        r = task.run(task=netmiko_send_command,
-                     name=f"SHOW RUN PARA EL HOST: {task.host} {task.host.hostname}",
-                     command_string='show run',
-                     severity_level=logging.DEBUG,
-                     ).result
-        return r
-    except NornirSubTaskError as e:
-        print(f'Excepcion {e} capturada en get_config de ios.py. Excepcion: {e.__class__}')
+    r = task.run(task=netmiko_send_command,
+                        name=f"SHOW RUN PARA EL HOST: {task.host} {task.host.hostname}",
+                        command_string='show run',
+                        severity_level=logging.DEBUG,
+                        ).result
+    return r
 
 
 def get_interfaces_status(task: Task) -> List[Dict[str, str]]:

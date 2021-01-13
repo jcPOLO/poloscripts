@@ -16,16 +16,17 @@ nxos:
 huawei:
   connection_options:
     netmiko:
-      extras: {}
+      extras:
+          global_delay_factor: 0
 
 ios_telnet:
   connection_options:
     netmiko:
       extras:
         device_type: 'cisco_ios_telnet'
+        fast_cli: False
+        global_delay_factor: 2
     napalm:
       extras:
         optional_args:
           transport: 'telnet'
-
-0094: {}

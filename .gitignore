@@ -32,3 +32,4 @@ nornir-scripts/templates/ios/final.j2
 /snmp_query/output/
 *final.j2
 *inventory.csv_*
+nornir3/inventory/hosts.yaml

@@ -6,14 +6,11 @@ from netmiko.ssh_exception import NetmikoAuthenticationException
 
 
 def get_config(task: Task) -> str:
-    try:
-        r = task.run(task=netmiko_send_command,
-                    name=f"DISPLAY CURRENT PARA EL HOST: {task.host} {task.host.hostname}",
-                    command_string='display current',
-                    severity_level=logging.DEBUG,
-                    ).result
-    except NetmikoAuthenticationException:
-        print(f'Excepcion capturada: {e}, en get_config de huawei.py')
+    r = task.run(task=netmiko_send_command,
+                name=f"DISPLAY CURRENT PARA EL HOST: {task.host} {task.host.hostname}",
+                command_string='display current',
+                severity_level=logging.DEBUG,
+                ).result
     return r
 
 
