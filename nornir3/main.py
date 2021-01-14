@@ -19,7 +19,7 @@ def main_task(
     ini_vars: Dict,
     **kwargs
 ) -> AggregatedResult:
-    result = ''
+
     with tqdm(
         total=len(devices.inventory.hosts), desc='applying config',
     ) as make_magic_bar:
@@ -73,6 +73,7 @@ def main() -> None:
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
 
+    # show filter options menu and return device inventory filtered
     filter_obj = Filter(nr)
     devices = filter_obj.nr
 
