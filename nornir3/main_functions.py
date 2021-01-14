@@ -1,16 +1,15 @@
 from helpers import check_directory
-from nornir.core import Nornir, Task
-from nornir.core.filter import F
-from nornir.core.inventory import ConnectionOptions
+from nornir.core import Task
 from tasks import backup_config, basic_configuration, \
     get_interface_description, get_interfaces_status, \
     save_config
 from typing import Dict, List
 import configparser
-from tqdm import tqdm
+
 
 PLATFORM = ['ios', 'huawei', 'nxos']
 FINAL_TEMPLATE = 'final.j2'
+
 
 def make_magic(
     task: Task,
@@ -18,28 +17,33 @@ def make_magic(
     ini_vars: configparser,
     make_magic_bar,
     get_config_bar,
-    backup_config_bar
+    backup_config_bar,
+    on_retry=False
 ) -> None:
     config_vars = dict(ini_vars['CONFIG'])
     # makes a log file output for every device accessed
     session_log(task, config_vars.get('outputs_path', None))
-    # backup config
+    # backup running config
     backup_config(task, config_vars.get('backups_path', None))
+    if on_retry is True:
+        backup_config_bar.clear()
+        get_config_bar.clear()
+        make_magic_bar.clear()
+        on_retry = False
+
     backup_config_bar.update()
     # if option 2 or 3 is selected
     if 'trunk_description.j2' in templates or 'management.j2' in templates:
         trunk_description(task)
     if 'save_config' in templates:
-        make_magic_bar.clear()
         save_config(task)
         get_config_bar.update()
-        #tqdm.write(f"{task.host}: saved config")
+        # tqdm.write(f"{task.host}: saved config")
     else:
         # apply final template
-        get_config_bar.clear()
         basic_configuration(task, FINAL_TEMPLATE, ini_vars)
         make_magic_bar.update()
-        #tqdm.write(f"{task.host}: applied new config")
+        # tqdm.write(f"{task.host}: applied new config")
 
 
 def session_log(task: Task, path: str = 'outputs/') -> str:
@@ -71,10 +75,10 @@ def process_data_trunk(data: List) -> List[str]:
     for interface in data:
 
         try:
-            if interface['link'] == 'trunk':  # huawei - display port vlan
+            if interface['link'] == 'trunk':  # huawei: display port vlan
                 result.append(interface['port'])
         except KeyError:
-            if interface['status'] == 'trunking':  # ios - show interfaces trunk
+            if interface['status'] == 'trunking':  # ios: show interfaces trunk
                 result.append(interface['port'])
 
     return result
