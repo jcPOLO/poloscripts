@@ -1,0 +1,26 @@
+#
+ info-center loghost {{ ini_vars['syslog_ip'] }}
+ info-center logbuffer channel 2
+ info-center timestamp debugging format-date
+ info-center timestamp log format-date
+#
+ lldp enable
+#
+hwtacacs-server template acs
+ hwtacacs-server timer response-timeout 1
+#
+aaa
+ local-user {{ ini_vars['user_lote7'] }} password cipher {{ ini_vars['user_lote7_password'] }}
+ local-user {{ ini_vars['user_lote7'] }} privilege level 15
+ local-user {{ ini_vars['user_lote7'] }} service-type telnet ssh
+ local-user {{ ini_vars['user_lote1'] }} password cipher {{ ini_vars['user_lote1_password'] }}
+ local-user {{ ini_vars['user_lote1'] }} privilege level 15
+ local-user {{ ini_vars['user_lote1'] }} service-type ssh
+#
+user-interface con 0
+ authentication-mode password
+ set authentication password cipher {{ ini_vars['console_password'] }}
+#
+user-interface vty 0 4
+ undo acl inbound
+#

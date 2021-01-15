@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, List
+from typing import List
 from nornir.core.filter import F
 import os, sys
 
@@ -6,7 +6,8 @@ import os, sys
 class Filter(object):
 
     platforms = ['ios', 'huawei']
-    # keys = ['hostname', 'is_telnet', 'platform', 'host', 'ip', 'mask', 'new_dg', 'current_dg', 'site_code']
+    # keys = ['hostname', 'is_telnet', 'platform', 'host', 'ip', 'mask',
+    # 'new_dg', 'current_dg', 'site_code']
     keys = ['current_dg', 'ip', 'mask', 'new_dg', 'role', 'site_code']
 
     def __init__(self, nr, filter_parameters={}) -> None:
@@ -39,13 +40,26 @@ class Filter(object):
            3. By hostname
            4. Other fields...
 
-           -------------------------------------------------------------------------------
+           --------------------------------------------------------------------
 
            ENTER to continue      s. Show selection       z. Clear selections
 
            e. Exit
 
            """)
+
+    @staticmethod
+    def devices_filtered(self, text='All devices selected:') -> None:
+        msg = text + '\n'
+        i = 0
+        for device in self.nr.inventory.hosts:
+            i += 1
+            msg += f' \
+                {i} \
+                {self.nr.inventory.hosts[device].platform} \
+                {self.nr.inventory.hosts[device].name} \
+                {self.nr.inventory.hosts[device].hostname}\n'
+        return msg
 
     def run(self, msg='') -> None:
 
@@ -62,7 +76,7 @@ class Filter(object):
                 return self.nr
 
     def show(self) -> None:
-        msg = self.nr.inventory.hosts
+        msg = self.devices_filtered(self)
         self.run(msg)
 
     def clear(self) -> None:
@@ -82,15 +96,17 @@ class Filter(object):
         for host in nr.inventory.hosts.values():
             platforms.add(host.platform)
 
-        platform = input(f"Platform to filter by: - {', '.join(platforms)}:").lower()
+        platform = input(
+            f"Platform to filter by: - {', '.join(platforms)}:"
+        ).lower()
 
         if platform in platforms:
             devices = nr.filter(F(platform=platform))
             self.nr = devices
-            msg = f'Filtered by platform: {platform}'
+            msg = self.devices_filtered(self, 'Filtered by {platform}:')
             self.run(msg)
         else:
-            msg = f'All platforms shown selected.'
+            msg = self.devices_filtered(self)
             self.run(msg)
 
     def by_hostname(self):
@@ -106,11 +122,11 @@ class Filter(object):
         if hostname in hostnames:
             devices = nr.filter(F(hostname=hostname))
             self.nr = devices
-            msg = f'Filtered by current device IP: {hostname}'
+            msg = self.devices_filtered(self, 'Filtered by IP:')
             self.run(msg)
 
         else:
-            msg = f'All devices shown selected.'
+            msg = self.devices_filtered(self)
             self.run(msg)
 
     # def by_site_code(self):
@@ -135,6 +151,7 @@ class Filter(object):
 
     def by_host(self):
         nr = self.nr
+        devices = ''
 
         hostnames = set()
 
@@ -143,15 +160,27 @@ class Filter(object):
 
         hostname = input(f"IP to filter by: - {', '.join(hostnames)}:")
         hostname_list = hostname.split(',')
-        hostname_list = list(filter(None, [host.strip() for host in hostname_list]))
+        if "!" in hostname_list:
+            hostname_list.remove("!")
 
-        devices = nr.filter(filter_func=lambda h: h.name in hostname_list)
+        hostname_list = list(filter(
+            None, [host.strip() for host in hostname_list]
+        ))
+        # If we add "!" to selection, we exclude the devices in instead
+        if "!" in hostname:
+            devices = nr.filter(
+                filter_func=lambda h: h.name not in hostname_list
+            )
+        else:
+            devices = nr.filter(
+                filter_func=lambda h: h.name in hostname_list
+            )
         self.nr = devices
-        msg = f'Filtered by current device name: {hostname_list}'
+        msg = self.devices_filtered(self, 'Filtered by hostname:')
         self.run(msg)
 
         if not devices:
-            msg = f'All devices shown selected.'
+            msg = self.devices_filtered(self)
             self.run(msg)
 
     def by_field(self):
@@ -165,16 +194,18 @@ class Filter(object):
             for host in nr.inventory.hosts.values():
                 values.add(host[field])
 
-            value = input(f"{field} to filter by: - {', '.join(values)}:").lower()
+            value = input(
+                f"{field} to filter by: - {', '.join(values)}:"
+            ).lower()
 
             if value in values:
                 devices = nr.filter(F(**{field: str(value)}))
                 self.nr = devices
-                msg = f'Filtered by {field}: {value}'
+                msg = self.devices_filtered(self, 'Filtered by {field}')
                 self.run(msg)
 
         else:
-            msg = f'All devices shown selected.'
+            msg = self.devices_filtered(self)
             self.run(msg)
 
     def show_filtering_options(self, nr, fields={}):

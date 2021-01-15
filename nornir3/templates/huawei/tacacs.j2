@@ -1,0 +1,35 @@
+hwtacacs enable
+#
+hwtacacs-server template acs
+ hwtacacs-server authentication {{ ini_vars['tacacs1_ip'] }}
+ hwtacacs-server authentication {{ ini_vars['tacacs2_ip'] }} secondary
+ hwtacacs-server authorization {{ ini_vars['tacacs1_ip'] }}
+ hwtacacs-server authorization {{ ini_vars['tacacs2_ip'] }} secondary
+#hwtacacs-server source-ip 1.43.5.233
+ hwtacacs-server shared-key {{ ini_vars['tacacs_key'] }}
+ undo hwtacacs-server user-name domain-included
+#
+aaa
+ authentication-scheme default
+ authentication-scheme tacacs
+  authentication-mode hwtacacs local
+  authentication-super hwtacacs super
+ authorization-scheme default
+ authorization-scheme tacacs
+  authorization-mode  hwtacacs local
+ accounting-scheme default
+ domain default
+ domain default_admin
+  authentication-scheme tacacs
+  authorization-scheme tacacs
+  hwtacacs-server acs
+#
+user-interface con 0
+ authentication-mode password
+ user privilege level 15
+ set authentication password {{ ini_vars['console_password'] }}
+ idle-timeout 0 0
+user-interface vty 0 4
+ authentication-mode aaa
+ protocol inbound ssh
+#

@@ -1,0 +1,14 @@
+#
+ vlan {{ ini_vars['management_vlan_id'] }}
+  description GestRED
+#
+{% for interface in nr.host['interfaces'] %}
+interface {{ interface['interface'] }}
+ port trunk allow-pass vlan {{ ini_vars['management_vlan_id'] }}
+ quit
+{% endfor %}
+#
+interface Vlanif{{ ini_vars['management_vlan_id'] }}
+ description Vlanif{{ ini_vars['management_vlan_id'] }} configurada con Nornir
+ ip address {{ nr.host['ip'] }} {{ nr.host['mask'] }}
+#

@@ -1,0 +1,16 @@
+!
+tacacs-server key 7 {{ ini_vars['tacacs_key'] }}
+!ip tacacs source-interface mgmt0
+tacacs-server timeout 2
+tacacs-server host {{ ini_vars['tacacs1_ip'] }} key 7 {{ ini_vars['tacacs_key'] }}
+tacacs-server host {{ ini_vars['tacacs2_ip'] }} key 7 {{ ini_vars['tacacs_key'] }}
+aaa group server tacacs+ TACACS
+    server {{ ini_vars['tacacs1_ip'] }}
+    server {{ ini_vars['tacacs2_ip'] }}
+    !source-interface mgmt0
+!
+aaa new-model
+aaa authentication login default group TACACS
+aaa authentication login console local
+aaa authorization config-commands default group TACACS local
+!

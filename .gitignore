@@ -26,3 +26,10 @@ nornir-scripts/templates/ios/final.j2
 /.vs
 *new_fw_context.py
 *script_basico.py
+/ping_net/*.txt
+/ping_net/output/
+/snmp_query/*.txt
+/snmp_query/output/
+*final.j2
+*inventory.csv_*
+nornir3/inventory/hosts.yaml

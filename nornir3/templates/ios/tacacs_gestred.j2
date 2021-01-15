@@ -1,0 +1,9 @@
+!
+tacacs-server host {{ ini_vars['tacacs1_ip_gestred'] }}
+tacacs-server host {{ ini_vars['tacacs2_ip_gestred'] }}
+no tacacs-server host {{ ini_vars['tacacs1_ip'] }}
+no tacacs-server host {{ ini_vars['tacacs2_ip'] }}
+tacacs-server key {{ ini_vars['tacacs_key'] }}
+!
+ip tacacs source-interface vlan{{ ini_vars['management_vlan_id'] }}
+!

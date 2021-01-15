@@ -1,0 +1,19 @@
+#
+sysname {{ nr.host['ip'] }}
+#
+dns domain {{ ini_vars['dns_domain'] }}
+#
+ssh authentication-type default password
+#
+user-interface vty 0 4
+ und acl inbound
+ protocol inbound all
+#
+stelnet server enable
+#
+rsa local-key-pair create
+y
+y
+1024
+y
+#
