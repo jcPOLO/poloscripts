@@ -17,6 +17,7 @@ tqdm = "^4.55.1"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.4"
+pylama = "^7.7.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

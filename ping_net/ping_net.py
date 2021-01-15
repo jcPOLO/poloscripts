@@ -78,13 +78,13 @@ def main():
                 i += 1
                 if i > MAX_PROCESS:
                     process_childs(pings, result, i)
-                    
             process_childs(pings, result, i)
 
             file = net.replace('/', '_') + '.txt'
             with open(file, 'w+') as f:
                 for host_ip in result:
-                    f.write(host_ip + '\n')
+                    if host_ip not in f.read():
+                        f.write(host_ip + '\n')
 
     except TypeError:
         print("error")
