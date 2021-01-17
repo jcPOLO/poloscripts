@@ -6,7 +6,6 @@ from tasks import backup_config, basic_configuration, \
 from typing import Dict, List
 import configparser
 
-
 PLATFORM = ['ios', 'huawei', 'nxos']
 FINAL_TEMPLATE = 'final.j2'
 
@@ -15,14 +14,14 @@ def make_magic(
     task: Task,
     templates: str,
     ini_vars: configparser,
-    make_magic_bar,
-    get_config_bar,
-    backup_config_bar,
-    on_retry=False
+    make_magic_bar: 'tqdm',
+    get_config_bar: 'tqdm',
+    backup_config_bar: 'tqdm',
+    on_retry: bool = False
 ) -> None:
     config_vars = dict(ini_vars['CONFIG'])
     # makes a log file output for every device accessed
-    session_log(task, config_vars.get('outputs_path', None))
+    session_log(task, config_vars.get('outputs_path', None)) 
     # backup running config
     backup_config(task, config_vars.get('backups_path', None))
     if on_retry is True:
