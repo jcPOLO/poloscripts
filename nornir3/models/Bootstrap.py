@@ -7,7 +7,12 @@ from typing import Dict
 
 class Bootstrap(object):
 
-    def __init__(self, ini_file='../.global.ini', csv_file='inventory.csv', **kwargs):
+    def __init__(
+        self,
+        ini_file: str = '../.global.ini',
+        csv_file: str = 'inventory.csv',
+        **kwargs
+    ):
 
         self.ini_file = ini_file
         self.csv_file = csv_file
@@ -55,9 +60,12 @@ class Bootstrap(object):
             with open(self.csv_file, 'r') as csv_file:
                 csv_reader = csv.DictReader(csv_file)
 
-                fields = 'site_code,host,hostname,is_telnet,platform,ip,mask,new_dg,current_dg'
+                fields = 'site_code,host,hostname,is_telnet,platform,' + \
+                    'ip,mask,new_dg,current_dg'
 
-                wrong_header_fields = list(set(fields.split(',')) - set(csv_reader.fieldnames))
+                fields_set = set(fields.split(','))
+                csv_fields_set = set(csv_reader.fieldnames)
+                wrong_header_fields = list(fields_set - csv_fields_set)
                 if not wrong_header_fields:
                     for row in csv_reader:
                         site_code = row['site_code']

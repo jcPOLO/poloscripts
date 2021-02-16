@@ -7,18 +7,17 @@ from models.Bootstrap import Bootstrap
 from models.Filter import Filter
 from tqdm import tqdm
 from typing import Dict
-from nornir.core.task import AggregatedResult
 
 CFG_FILE = 'config.yaml'
 EXCLUDED_VLANS = [1, 1002, 1003, 1004, 1005]
 
 
 def main_task(
-    devices,
+    devices: 'Nornir',
     templates: str,
     ini_vars: Dict,
     **kwargs
-) -> AggregatedResult:
+) -> 'AggregatedResult':
 
     with tqdm(
         total=len(devices.inventory.hosts), desc='applying config',
@@ -37,11 +36,12 @@ def main_task(
                                      get_config_bar=get_config_bar,
                                      backup_config_bar=backup_config_bar,
                                      **kwargs
+
                                      )
     return result
 
 
-def on_failed_host(devices, result):
+def on_failed_host(devices: 'Nornir', result: 'AggregatedResult'):
     print(
         """
         Failed HOSTS:

@@ -1,5 +1,5 @@
-import configparser
 import logging
+import configparser
 from typing import Dict, List
 
 from nornir.core import Task
@@ -20,7 +20,11 @@ def get_interfaces_status(task: Task) -> List[Dict[str, str]]:
     return r
 
 
-def basic_configuration(task: Task, template: str, ini_vars: configparser) -> None:
+def basic_configuration(
+    task: Task,
+    template: str,
+    ini_vars: configparser
+) -> None:
     # convert ini_vars configparser object to dict for templates
     path = ini_vars.get('CONFIG', 'templates_path')
     ini_vars = dict(ini_vars['GLOBAL'])
@@ -69,7 +73,10 @@ def save_config(task: Task) -> None:
         ios.save_config(task)
 
 
-def get_interface_description(interfaces: List, task: Task) -> List[Dict[str, str]]:
+def get_interface_description(
+    interfaces: List,
+    task: Task
+) -> List[Dict[str, str]]:
     r = ''
     result = []
     for interface in interfaces:

@@ -5,6 +5,8 @@ import socket
 import sys
 import os
 from multiprocessing import Process
+from concurrent.futures import ProcessPoolExecutor, \
+    as_completed
 from pysnmp.hlapi import *
 import configparser
 
@@ -375,9 +377,11 @@ def save_to_file(_ip_address_, _facts_):
                 f.write(fact_to_write)
 
 
-def get_facts(_ip_address_, data):
+def get_facts(data, _ip_address_):
     s = SnmpQuery(_ip_address_)
-    s.get_connection()
+    if not s.get_connection():
+        return None
+
     if s.get_hostname() != '-' and s.get_platform():
         s.get_mask()
         s.get_default_route()
@@ -434,15 +438,22 @@ def main():
             for line in f.readlines():
                 if len(line.strip()) > 0:
                     inventory.append(line.strip())
-        for host in inventory:
-            proc = Process(target=get_facts, args=(host, data))
-            processes.append(proc)
-            proc.start()
-        for p in processes:
-            p.join()
+
+        with ProcessPoolExecutor() as executor:
+            args = ((data, i) for i in  inventory)
+            results = [executor.submit(get_facts, data, i) for i in inventory]
+            for f in as_completed(results):
+                f.result()
     else:
         sys.exit(2)
 
 
 if __name__ == "__main__":
+    from time import perf_counter
+    # Start the stopwatch / counter
+    t1_start = perf_counter()
     main()
+    t1_stop = perf_counter()
+    elapsed_time = t1_stop - t1_start
+    print("Elapsed time during the whole program in seconds:",
+          '{0:.2f}'.format(elapsed_time))
