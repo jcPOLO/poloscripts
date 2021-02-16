@@ -8,7 +8,7 @@ from typing import Dict
 class Bootstrap(object):
 
     def __init__(
-        self, 
+        self,
         ini_file: str = '../.global.ini',
         csv_file: str = 'inventory.csv',
         **kwargs
@@ -66,7 +66,6 @@ class Bootstrap(object):
                 fields_set = set(fields.split(','))
                 csv_fields_set = set(csv_reader.fieldnames)
                 wrong_header_fields = list(fields_set - csv_fields_set)
-                import ipdb; ipdb.set_trace()
                 if not wrong_header_fields:
                     for row in csv_reader:
                         site_code = row['site_code']
