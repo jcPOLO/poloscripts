@@ -72,7 +72,7 @@ def main() -> None:
     # show the main menu
     # menu_obj = Menu()
     # selections = menu_obj.run()
-    selections = ['get_version']
+    selections = ['get_facts']
 
     username = input("\nUsername:")
     password = getpass.getpass()
@@ -85,7 +85,7 @@ def main() -> None:
     # Start the stopwatch / counter
     t1_start = perf_counter()
 
-    logger.info('----------- LOADING -----------')
+    logger.info('----------- LOADING -----------\n')
 
     result = main_task(devices, selections)
     print_result(result)
@@ -107,7 +107,7 @@ def main() -> None:
             break
 
     elapsed_time = t1_stop - t1_start
-    logger.info(
+    print(
         "Elapsed time during the whole program in seconds:",
         '{0:.2f}'.format(elapsed_time))
 

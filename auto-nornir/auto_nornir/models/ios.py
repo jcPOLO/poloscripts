@@ -20,7 +20,7 @@ def get_facts(task: Task) -> str:
     r = task.run(task=napalm_get,
                  name=f'FACTs PARA: {task.host}',
                  getters=['facts'],
-                 severity_level=logging.DEBUG,
+                 severity_level=logging.INFO,
                  ).result
     return r
 
