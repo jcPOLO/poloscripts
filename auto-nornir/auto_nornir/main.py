@@ -2,10 +2,10 @@ from nornir import InitNornir
 from nornir_utils.plugins.functions import print_result
 import getpass
 from main_functions import auto_nornir
-from models.Menu import Menu
+# from models.Menu import Menu
 from models.Bootstrap import Bootstrap
-from models.Filter import Filter
-from tqdm import tqdm
+# from models.Filter import Filter
+# from tqdm import tqdm
 from typing import Dict, List
 from helpers import configure_logging
 
@@ -21,14 +21,12 @@ logger = logging.getLogger(__name__)
 def main_task(
     devices: 'Nornir',
     selections: List,
-    ini_vars: Dict,
     **kwargs
 ) -> 'AggregatedResult':
 
     result = devices.run(
         task=auto_nornir,
         selections=selections,
-        ini_vars=ini_vars,
         name=f'CONTAINER TASK',
         **kwargs
     )
@@ -63,9 +61,6 @@ def main() -> None:
     # by default .global.ini
     bootstrap = Bootstrap()
 
-    # configparser object, similar to dict object
-    ini_vars = bootstrap.get_ini_vars()
-
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
     devices = nr
@@ -92,7 +87,7 @@ def main() -> None:
 
     logger.info('----------- LOADING -----------')
 
-    result = main_task(devices)
+    result = main_task(devices, selections)
     print_result(result)
 
     t1_stop = perf_counter()
@@ -106,7 +101,7 @@ def main() -> None:
                 'on_retry': True
             }
 
-            result = main_task(devices, selections, ini_vars, **params)
+            result = main_task(devices, selections, **params)
             print_result(result)
         else:
             break

@@ -1,6 +1,6 @@
 import os
 import sys
-from ..helpers import is_int
+from helpers import is_int
 import logging
 
 

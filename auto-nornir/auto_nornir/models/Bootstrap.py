@@ -1,11 +1,17 @@
 import configparser
 import csv
 import yaml
-from ..helpers import is_ip, check_directory
+from helpers import is_ip, check_directory, configure_logging
 from typing import Dict
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Bootstrap(object):
+
+    configure_logging(logger)
 
     def __init__(
         self,
@@ -45,17 +51,21 @@ class Bootstrap(object):
                         hostname = row['hostname'] if is_ip(row['hostname']) else None
 
                         # remove duplicated hostname
-                        if None not in hostname and hostname not in result.keys():
+                        if hostname not in result.keys():
                             result[hostname] = {
                                 'hostname': hostname,
                                 'platform': platform,
-                                }
+                                'groups': [
+                                    platform
+                                ]
+                            }
                 else:
-                    print('{} not in csv header'.format(wrong_header_fields))
+                    logger.info('{} not in csv header'.format(wrong_header_fields))
                     exit()
 
             return result
         except Exception as e:
+            logger.error('{} Error'.format(e))
             raise e
 
     def load_inventory(self) -> None:

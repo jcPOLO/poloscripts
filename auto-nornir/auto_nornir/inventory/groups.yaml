@@ -1,7 +1,7 @@
 ---
 global:
   data:
-    domain: ''
+    domain: 'aragon.es'
 
 ios:
   connection_options:
