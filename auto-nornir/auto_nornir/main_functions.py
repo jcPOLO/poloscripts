@@ -1,43 +1,44 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, basic_configuration, \
-    get_interface_description, get_interfaces_status, \
-    save_config
-from typing import Dict, List
+from tasks import backup_config, save_config
+from models.ios import get_version, get_facts
 import configparser
+from typing import List
 
-PLATFORM = ['ios', 'huawei', 'nxos']
-FINAL_TEMPLATE = 'final.j2'
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def make_magic(
+def auto_nornir(
     task: Task,
-    config_vars
-    on_retry: bool = False
+    ini_vars: configparser,
+    selections: List
 ) -> None:
+    config_vars = dict(ini_vars['CONFIG'])
     # makes a log file output for every device accessed
     session_log(task, config_vars.get('outputs_path', None)) 
     # backup running config
     backup_config(task, config_vars.get('backups_path', None))
 
-    # if option 2 or 3 is selected
-    if 'trunk_description.j2' in templates or 'management.j2' in templates:
-        trunk_description(task)
-    if 'save_config' in templates:
+    # tasks
+    if 'get_version' in selections:
+        logger.info("get_version selected")
+        get_version(task)
+    if 'get_facts' in selections:
+        logger.info("get_facts selected")
+        get_facts(task)
+    if 'save_config' in selections:
+        logger.info("save_config selected")
         save_config(task)
-        get_config_bar.update()
-        # tqdm.write(f"{task.host}: saved config")
     else:
-        # apply final template
-        basic_configuration(task, FINAL_TEMPLATE, ini_vars)
-        make_magic_bar.update()
-        # tqdm.write(f"{task.host}: applied new config")
+        logger.warning("nothing selected")
 
 
 def session_log(task: Task, path: str = 'outputs/') -> str:
     if path is None:
         path = 'outputs/'
-    file = f'{task.host}-{task.host.hostname}-output.txt'
+    file = f'{task.host}-output.txt'
     filename = f'{path}{file}'
 
     check_directory(path)

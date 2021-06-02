@@ -1,12 +1,12 @@
 from nornir import InitNornir
 from nornir_utils.plugins.functions import print_result
 import getpass
-from main_functions import make_magic
+from main_functions import auto_nornir
 from models.Menu import Menu
 from models.Bootstrap import Bootstrap
 from models.Filter import Filter
 from tqdm import tqdm
-from typing import Dict
+from typing import Dict, List
 from helpers import configure_logging
 
 import logging
@@ -20,11 +20,15 @@ logger = logging.getLogger(__name__)
 
 def main_task(
     devices: 'Nornir',
+    selections: List,
+    ini_vars: Dict,
     **kwargs
 ) -> 'AggregatedResult':
 
     result = devices.run(
-        task=make_magic,
+        task=auto_nornir,
+        selections=selections,
+        ini_vars=ini_vars,
         name=f'CONTAINER TASK',
         **kwargs
     )
@@ -60,7 +64,7 @@ def main() -> None:
     bootstrap = Bootstrap()
 
     # configparser object, similar to dict object
-    # ini_vars = bootstrap.get_ini_vars()
+    ini_vars = bootstrap.get_ini_vars()
 
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
@@ -72,7 +76,8 @@ def main() -> None:
 
     # show the main menu
     # menu_obj = Menu()
-    # menu = menu_obj.run()
+    # selections = menu_obj.run()
+    selections = ['get_version']
 
     username = input("\nUsername:")
     password = getpass.getpass()
@@ -101,7 +106,7 @@ def main() -> None:
                 'on_retry': True
             }
 
-            result = main_task(devices, **params)
+            result = main_task(devices, selections, ini_vars, **params)
             print_result(result)
         else:
             break

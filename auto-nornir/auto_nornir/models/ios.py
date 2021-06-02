@@ -2,17 +2,35 @@ from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config
 from nornir_napalm.plugins.tasks import napalm_get
 from nornir.core import Task
 from typing import List, Dict
+
 import logging
-from netmiko.ssh_exception import NetmikoAuthenticationException
-from nornir.core.exceptions import NornirSubTaskError
+
+
+def get_version(task: Task) -> str:
+    r = task.run(task=netmiko_send_command,
+                 name=f'SHOW VERSION PARA EL HOST: {task.host}',
+                 command_string='show version',
+                 use_textfsm=True,
+                 severity_level=logging.DEBUG,
+                 ).result
+    return r
+
+
+def get_facts(task: Task) -> str:
+    r = task.run(task=napalm_get,
+                 name=f'FACTs PARA: {task.host}',
+                 getters=['facts'],
+                 severity_level=logging.DEBUG,
+                 ).result
+    return r
 
 
 def get_config(task: Task) -> str:
     r = task.run(task=netmiko_send_command,
-                        name=f"SHOW RUN PARA EL HOST: {task.host} {task.host.hostname}",
-                        command_string='show run',
-                        severity_level=logging.DEBUG,
-                        ).result
+                 name=f"SHOW RUN PARA EL HOST: {task.host} {task.host.hostname}",
+                 command_string='show run',
+                 severity_level=logging.DEBUG,
+                 ).result
     return r
 
 
