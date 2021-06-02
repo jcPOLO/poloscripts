@@ -1,6 +1,8 @@
 import ipaddress
 import os
 import errno
+import logging
+import sys
 
 
 def is_ip(string: str) -> bool:
@@ -32,3 +34,20 @@ def get_platforms(path='templates') -> list:
         except Exception as e:
             raise e
 
+
+def configure_logging(logger, debug=''):
+    if debug:
+        logger.setLevel(logging.DEBUG)
+    else:
+        logger.setLevel(logging.INFO)
+    ch = logging.StreamHandler(sys.stdout)
+    fh = logging.FileHandler('auto-nornir.log')
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    ch.setFormatter(formatter)
+    fh.setFormatter(formatter)
+    logger.addHandler(ch)
+    logger.addHandler(fh)
+
+    return logger

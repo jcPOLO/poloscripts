@@ -2,42 +2,32 @@ from nornir import InitNornir
 from nornir_utils.plugins.functions import print_result
 import getpass
 from main_functions import make_magic
-from models.Menu import Menu, Template
+from models.Menu import Menu
 from models.Bootstrap import Bootstrap
 from models.Filter import Filter
 from tqdm import tqdm
 from typing import Dict
+from helpers import configure_logging
+
+import logging
+
 
 CFG_FILE = 'config.yaml'
 EXCLUDED_VLANS = [1, 1002, 1003, 1004, 1005]
 
+logger = logging.getLogger(__name__)
+
 
 def main_task(
     devices: 'Nornir',
-    templates: str,
-    ini_vars: Dict,
     **kwargs
 ) -> 'AggregatedResult':
 
-    with tqdm(
-        total=len(devices.inventory.hosts), desc='applying config',
-    ) as make_magic_bar:
-        with tqdm(
-            total=len(devices.inventory.hosts), desc='writing config',
-        ) as get_config_bar:
-            with tqdm(
-                total=len(devices.inventory.hosts), desc='making backup',
-            ) as backup_config_bar:
-                result = devices.run(task=make_magic,
-                                     name=f'CONTAINER TASK',
-                                     templates=templates,
-                                     ini_vars=ini_vars,
-                                     make_magic_bar=make_magic_bar,
-                                     get_config_bar=get_config_bar,
-                                     backup_config_bar=backup_config_bar,
-                                     **kwargs
-
-                                     )
+    result = devices.run(
+        task=make_magic,
+        name=f'CONTAINER TASK',
+        **kwargs
+    )
     return result
 
 
@@ -49,10 +39,10 @@ def on_failed_host(devices: 'Nornir', result: 'AggregatedResult'):
         """
     )
     for host in result.failed_hosts:
-        print(f'Host: \x1b[1;31;40m{host} \
+        logger.error(f'Host: \x1b[1;31;40m{host} \
             {devices.inventory.hosts[host].hostname}\x1b[0m')
-        print(f'|_Error: \x1b[0;31;40m{result[host][1].exception}\x1b[0m')
-        print(f'|_Task: {result.failed_hosts[host]}')
+        logger.error(f'|_Error: \x1b[0;31;40m{result[host][1].exception}\x1b[0m')
+        logger.error(f'|_Task: {result.failed_hosts[host]}')
 
     print(
         """
@@ -62,29 +52,27 @@ def on_failed_host(devices: 'Nornir', result: 'AggregatedResult'):
 
 
 def main() -> None:
+    # configure logger
+    configure_logging(logger)
 
     # creates hosts.yaml from csv file, ini file could be passed as arg,
     # by default .global.ini
     bootstrap = Bootstrap()
 
     # configparser object, similar to dict object
-    ini_vars = bootstrap.get_ini_vars()
+    # ini_vars = bootstrap.get_ini_vars()
 
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
+    devices = nr
 
     # show filter options menu and return device inventory filtered
-    filter_obj = Filter(nr)
-    devices = filter_obj.nr
+    # filter_obj = Filter(nr)
+    # devices = filter_obj.nr
 
     # show the main menu
-    menu_obj = Menu()
-    menu = menu_obj.run()
-
-    if isinstance(menu, Template):
-        templates = menu.templates
-    else:
-        templates = 'save_config'
+    # menu_obj = Menu()
+    # menu = menu_obj.run()
 
     username = input("\nUsername:")
     password = getpass.getpass()
@@ -97,9 +85,9 @@ def main() -> None:
     # Start the stopwatch / counter
     t1_start = perf_counter()
 
-    print('----------- LOADING -----------')
+    logger.info('----------- LOADING -----------')
 
-    result = main_task(devices, templates, ini_vars)
+    result = main_task(devices)
     print_result(result)
 
     t1_stop = perf_counter()
@@ -113,14 +101,15 @@ def main() -> None:
                 'on_retry': True
             }
 
-            result = main_task(devices, templates, ini_vars, **params)
+            result = main_task(devices, **params)
             print_result(result)
         else:
             break
 
     elapsed_time = t1_stop - t1_start
-    print("Elapsed time during the whole program in seconds:",
-          '{0:.2f}'.format(elapsed_time))
+    logger.info(
+        "Elapsed time during the whole program in seconds:",
+        '{0:.2f}'.format(elapsed_time))
 
 
 if __name__ == '__main__':

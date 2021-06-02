@@ -2,7 +2,7 @@
 name = "auto-nornir"
 version = "0.1.0"
 description = ""
-authors = ["BloodyMer <bloodymery@gmail.com>"]
+authors = ["jcPOLO <jcpologonzalez@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"

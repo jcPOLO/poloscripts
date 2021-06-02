@@ -1,22 +1,19 @@
-from typing import List
 from nornir.core.filter import F
-import os, sys
+import os
+import sys
 
 
 class Filter(object):
 
-    platforms = ['ios', 'huawei']
-    # keys = ['hostname', 'is_telnet', 'platform', 'host', 'ip', 'mask',
-    # 'new_dg', 'current_dg', 'site_code']
-    keys = ['current_dg', 'ip', 'mask', 'new_dg', 'role', 'site_code']
+    platforms = ['ios']
+    keys = ['']
 
-    def __init__(self, nr, filter_parameters={}) -> None:
+    def __init__(self, nr, filter_parameters=dict) -> None:
 
         self.choices = {
             "1": self.by_platform,
             "2": self.by_hostname,
-            "3": self.by_host,
-            "4": self.by_field,
+            "3": self.by_field,
             "z": self.clear,
             "s": self.show,
             "e": self.exit,
@@ -37,8 +34,7 @@ class Filter(object):
 
            1. Platform
            2. IP
-           3. By hostname
-           4. Other fields...
+           3. Other fields...
 
            --------------------------------------------------------------------
 
@@ -49,7 +45,7 @@ class Filter(object):
            """)
 
     @staticmethod
-    def devices_filtered(self, text='All devices selected:') -> None:
+    def devices_filtered(self, text='All devices selected:') -> str:
         msg = text + '\n'
         i = 0
         for device in self.nr.inventory.hosts:
@@ -62,7 +58,6 @@ class Filter(object):
         return msg
 
     def run(self, msg='') -> None:
-
         self.display_menu()
         if msg:
             print(msg)
@@ -84,7 +79,8 @@ class Filter(object):
         self.run()
         print(f'All filters cleared.\n')
 
-    def exit(self) -> None:
+    @staticmethod
+    def exit() -> None:
         print(f'Bye!\n')
         sys.exit()
 
@@ -129,60 +125,6 @@ class Filter(object):
             msg = self.devices_filtered(self)
             self.run(msg)
 
-    # def by_site_code(self):
-    #     nr = self.nr
-    #
-    #     sites = set()
-    #
-    #     for host in nr.inventory.hosts.values():
-    #         sites.add(host['site_code'])
-    #
-    #     site = input(f"Site to filter by: - {', '.join(sites)}:").lower()
-    #
-    #     if site:
-    #         devices = nr.filter(F(site=site))
-    #         self.nr = devices
-    #         msg = f'Filtered by site: {site}'
-    #         self.run(msg)
-    #
-    #     else:
-    #         msg = f'All sites selected.'
-    #         self.run(msg)
-
-    def by_host(self):
-        nr = self.nr
-        devices = ''
-
-        hostnames = set()
-
-        for host in nr.inventory.hosts.values():
-            hostnames.add(host.name)
-
-        hostname = input(f"IP to filter by: - {', '.join(hostnames)}:")
-        hostname_list = hostname.split(',')
-        if "!" in hostname_list:
-            hostname_list.remove("!")
-
-        hostname_list = list(filter(
-            None, [host.strip() for host in hostname_list]
-        ))
-        # If we add "!" to selection, we exclude the devices in instead
-        if "!" in hostname:
-            devices = nr.filter(
-                filter_func=lambda h: h.name not in hostname_list
-            )
-        else:
-            devices = nr.filter(
-                filter_func=lambda h: h.name in hostname_list
-            )
-        self.nr = devices
-        msg = self.devices_filtered(self, 'Filtered by hostname:')
-        self.run(msg)
-
-        if not devices:
-            msg = self.devices_filtered(self)
-            self.run(msg)
-
     def by_field(self):
         field = input(f"Field to filter by: - {', '.join(self.keys)}:").lower()
 
@@ -208,10 +150,11 @@ class Filter(object):
             msg = self.devices_filtered(self)
             self.run(msg)
 
-    def show_filtering_options(self, nr, fields={}):
-            if fields:
-                devices = nr.filter(F(groups__contains=fields))
-            else:
-                devices = nr.filter(F(groups__contains="ios"))
-            print(devices.inventory.hosts.keys())
-            pass
+    @staticmethod
+    def show_filtering_options(nr, fields=dict):
+        if fields:
+            devices = nr.filter(F(groups__contains=fields))
+        else:
+            devices = nr.filter(F(groups__contains="ios"))
+        print(devices.inventory.hosts.keys())
+        pass
