@@ -1,7 +1,7 @@
 import configparser
-import csv
 import yaml
-from helpers import is_ip, check_directory, configure_logging
+from csv import DictReader
+from ..helpers import is_ip, check_directory, configure_logging
 from typing import Dict
 
 import logging
@@ -16,15 +16,12 @@ class Bootstrap(object):
     def __init__(
         self,
         ini_file: str = '../.global.ini',
-        csv_file: str = 'inventory.csv',
-        **kwargs
+        csv_file: str = 'inventory.csv'
     ):
 
         self.ini_file = ini_file
         self.csv_file = csv_file
         self.load_inventory()
-        for k, v in kwargs.items():
-            setattr(self, k, v)
 
     def get_ini_vars(self) -> configparser:
         try:
@@ -41,7 +38,7 @@ class Bootstrap(object):
             result = {}
 
             with open(self.csv_file, 'r') as csv_file:
-                csv_reader = csv.DictReader(csv_file)
+                csv_reader = DictReader(csv_file)
                 fields = 'hostname'
                 fields_set = set(fields.split(','))
                 csv_fields_set = set(csv_reader.fieldnames)
