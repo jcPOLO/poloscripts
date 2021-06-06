@@ -5,6 +5,9 @@ import logging
 import sys
 
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
 def is_ip(string: str) -> bool:
     try:
         ipaddress.ip_address(string)
@@ -41,7 +44,7 @@ def configure_logging(logger, debug=''):
     else:
         logger.setLevel(logging.INFO)
     ch = logging.StreamHandler(sys.stdout)
-    fh = logging.FileHandler('auto-nornir.log')
+    fh = logging.FileHandler(f'{dir_path}/auto-nornir.log')
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )

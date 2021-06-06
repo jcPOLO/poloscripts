@@ -1,5 +1,12 @@
+import logging
+from auto_nornir.helpers import configure_logging
+
+logger = logging.getLogger(__name__)
+
 
 class AutoNornirException(Exception):
+
+    configure_logging(logger)
 
     REASONS = (
         "fail-config",  # config provided is not valid
@@ -14,6 +21,7 @@ class AutoNornirException(Exception):
         super(AutoNornirException, self).__init__(kwargs)
         self.reason = reason
         self.message = message
+        logger.error(message)
 
     def __str__(self):
         """Exception __str__."""

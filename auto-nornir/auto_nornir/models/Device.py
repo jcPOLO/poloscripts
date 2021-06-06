@@ -20,49 +20,34 @@ class Device(object):
             name (str): Device hostname
         """
 
-        self.hostname = hostname
-        self.platform = platform
-        self.port = port
+        self.hostname = self.validate_hostname(hostname)
+        self.platform = self.validate_platform(platform)
+        self.port = self.validate_port(port)
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    @property
-    def hostname(self):
-        return self._hostname
-
-    @property
-    def platform(self):
-        return self._platform
-
-    @hostname.setter
-    def hostname(self, a):
-        if not a:
-            raise ValidationException("hostname cannot be empty")
-        if not is_ip(a):
-            message = "hostname '{}' must be a valid IPv4 address".format(a)
-            raise ValidationException("fail-config", message)
-        self._hostname = a
-
-    @platform.setter
-    def platform(self, a):
+    @staticmethod
+    def validate_platform(a):
         platforms = ['ios', 'nxos']
         if a not in platforms:
             platforms_str = ', '.join(platforms)
             message = "platform '{}' is not in a supported. Supported: {}".format(a, platforms_str)
             raise ValidationException("fail-config", message)
-        self._platform = a
+        return a
 
-    @property
-    def port(self):
-        return self._port
+    @staticmethod
+    def validate_hostname(a):
+        if not a:
+            raise ValidationException("hostname cannot be empty")
+        if not is_ip(a):
+            message = "hostname '{}' must be a valid IPv4 address".format(a)
+            raise ValidationException("fail-config", message)
+        return a
 
-    @port.setter
-    def port(self, a):
+    @staticmethod
+    def validate_port(a):
         if 65535 > int(a) > 0:
-            self._port = int(a)
-        else:
+            return int(a)
+        if a is None:
             message = "port '{}' is not a valid port number".format(a)
             raise ValidationException("fail-config", message)
-
-    def run(self):
-        return self.__dict__

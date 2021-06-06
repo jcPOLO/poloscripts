@@ -2,13 +2,11 @@ import logging
 import configparser
 import yaml
 import pathlib
-from typing import Dict, Any
+from typing import Dict
 from csv import DictReader
 from auto_nornir.helpers import check_directory, configure_logging
 from auto_nornir.models.Device import Device
 from auto_nornir.exceptions import ValidationException
-
-import pprint
 
 
 logger = logging.getLogger(__name__)
@@ -28,7 +26,7 @@ class Bootstrap(object):
         self.ini_file = pathlib.Path(ini_file).expanduser()
         self.csv_file = pathlib.Path(csv_file).expanduser()
         self.encoding = encoding
-        self.load_inventory()
+        # self.load_inventory()
 
     def get_ini_vars(self) -> configparser:
         if self.ini_file.exists():
@@ -59,8 +57,6 @@ class Bootstrap(object):
                 raise ValidationException("fail-config", message)
             for h, n in devices.items():
                 result[h] = n.__dict__
-            pp = pprint.PrettyPrinter(indent=2)
-            pp.pprint(result)
             return result
 
     def load_inventory(self) -> None:

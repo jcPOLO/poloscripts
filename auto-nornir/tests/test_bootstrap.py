@@ -1,7 +1,12 @@
 import pytest
 from auto_nornir.models.Bootstrap import Bootstrap
+from auto_nornir.exceptions import ValidationException
 from io import StringIO
 import csv
+import os
+
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 def mock_csv_bad():
@@ -28,20 +33,27 @@ def mock_csv_good():
     return csv_file
 
 
-def test_import_inventory_file():
-
+def test_import_inventory_file_good():
     with pytest.raises(FileNotFoundError):
-        Bootstrap(
+        bootstrap = Bootstrap(
             csv_file='not_found.csv'
         )
+        bootstrap.load_inventory()
+
     bootstrap = Bootstrap(
-        csv_file='auto_nornir/inventory.csv'
+        csv_file=f'{dir_path}/inventory/inventory.csv'
     )
     hosts_dict = bootstrap.import_inventory_file()
     assert isinstance(hosts_dict, dict)
+    for n, h in hosts_dict.items():
+        assert 'hostname' in hosts_dict[n].keys()
+        assert 'platform' in hosts_dict[n].keys()
+        assert 'port' in hosts_dict[n].keys()
 
 
-def test_validate_devices():
-
-    csv_file = mock_csv_good()
-
+def test_import_inventory_file_bad():
+    with pytest.raises(ValidationException):
+        bootstrap = Bootstrap(
+            csv_file=f'{dir_path}/inventory/inventory_bad.csv'
+        )
+        bootstrap.load_inventory()

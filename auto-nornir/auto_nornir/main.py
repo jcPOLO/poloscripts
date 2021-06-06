@@ -60,6 +60,7 @@ def main() -> None:
     # creates hosts.yaml from csv file, ini file could be passed as arg,
     # by default .global.ini
     bootstrap = Bootstrap()
+    bootstrap.load_inventory()
 
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
