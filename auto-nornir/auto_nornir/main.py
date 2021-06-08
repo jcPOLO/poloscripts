@@ -1,19 +1,17 @@
 from nornir import InitNornir
 from nornir_utils.plugins.functions import print_result
-import getpass
-from main_functions import auto_nornir
-# from models.Menu import Menu
-from models.Bootstrap import Bootstrap
-# from models.Filter import Filter
+from auto_nornir.main_functions import auto_nornir
+from auto_nornir.models.Menu import Menu
+from auto_nornir.models.Bootstrap import Bootstrap
+# from auto_nornir.models.Filter import Filter
+from auto_nornir.helpers import configure_logging
 # from tqdm import tqdm
+import getpass
 from typing import Dict, List
-from helpers import configure_logging
-
 import logging
 
 
 CFG_FILE = 'config.yaml'
-EXCLUDED_VLANS = [1, 1002, 1003, 1004, 1005]
 
 logger = logging.getLogger(__name__)
 
@@ -71,8 +69,8 @@ def main() -> None:
     # devices = filter_obj.nr
 
     # show the main menu
-    # menu_obj = Menu()
-    # selections = menu_obj.run()
+    menu_obj = Menu()
+    selections = menu_obj.run()
     selections = ['get_facts']
 
     username = input("\nUsername:")

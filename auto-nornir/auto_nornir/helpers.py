@@ -48,7 +48,7 @@ def configure_logging(logger, debug=''):
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     )
-    ch.setFormatter(formatter)
+    # ch.setFormatter(formatter)
     fh.setFormatter(formatter)
     logger.addHandler(ch)
     logger.addHandler(fh)
