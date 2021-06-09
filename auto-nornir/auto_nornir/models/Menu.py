@@ -15,8 +15,8 @@ class Menu(object):
     def __init__(self) -> None:
         # TODO: Charge the options from device methods available
         self.choices = {
-            "1": "get_config",
-            "2": "get_facts",
+            "1": "get_facts",
+            "2": "get_config",
         }
         # TODO: Create a class with buttons
         self.buttons = {
@@ -64,8 +64,8 @@ class Menu(object):
                     self.final_choices.append(selection)
                     self.display_menu()
                     self.display_final_choices()
-            elif choice in self.choices.keys():
-                return self.choices.get(selection)()
+            elif choice in self.buttons.keys():
+                return self.buttons.get(selection)()
             else:
                 logger.error("{0} is not a valid choice".format(choice))
 
@@ -100,7 +100,7 @@ class Menu(object):
 
     def validate_selection(self, choice) -> int or str:
         if is_int(choice):
-            if int(choice) < (len(self.choices) - 3):
+            if int(choice) < (len(self.choices) + 1):
                 return int(choice)
         else:
             return choice

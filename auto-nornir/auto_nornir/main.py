@@ -1,4 +1,6 @@
 from nornir import InitNornir
+from nornir.core import Nornir
+from nornir.core.task import AggregatedResult
 from nornir_utils.plugins.functions import print_result
 from auto_nornir.main_functions import auto_nornir
 from auto_nornir.models.Menu import Menu
@@ -7,7 +9,7 @@ from auto_nornir.models.Bootstrap import Bootstrap
 from auto_nornir.helpers import configure_logging
 # from tqdm import tqdm
 import getpass
-from typing import Dict, List
+from typing import List
 import logging
 
 
@@ -71,7 +73,6 @@ def main() -> None:
     # show the main menu
     menu_obj = Menu()
     selections = menu_obj.run()
-    selections = ['get_facts']
 
     username = input("\nUsername:")
     password = getpass.getpass()

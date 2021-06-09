@@ -1,10 +1,8 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config
-from models.ios import get_version, get_facts
-import configparser
-from typing import List, Dict
-
+from tasks import backup_config, save_config, get_version, get_facts
+from typing import List
+# import configparser
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,8 +38,6 @@ def session_log(task: Task, path: str = 'outputs/') -> str:
     filename = f'{path}{file}'
 
     check_directory(path)
-    print(task.host)
     group_object = task.host.groups[0]
     group_object.connection_options["netmiko"].extras["session_log"] = filename
     return filename
-

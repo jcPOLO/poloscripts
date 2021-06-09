@@ -3,6 +3,9 @@ from ..exceptions import ValidationException
 from ..helpers import is_ip
 
 
+PLATFORMS = ['ios', 'nxos']
+
+
 class Device(object):
 
     def __init__(
@@ -23,12 +26,13 @@ class Device(object):
         self.hostname = self.validate_hostname(hostname)
         self.platform = self.validate_platform(platform)
         self.port = self.validate_port(port)
+        self.groups = [self.platform]
         for k, v in kwargs.items():
             setattr(self, k, v)
 
     @staticmethod
     def validate_platform(a):
-        platforms = ['ios', 'nxos']
+        platforms = PLATFORMS
         if a not in platforms:
             platforms_str = ', '.join(platforms)
             message = "platform '{}' is not in a supported. Supported: {}".format(a, platforms_str)

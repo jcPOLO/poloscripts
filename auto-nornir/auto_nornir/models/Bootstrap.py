@@ -36,7 +36,6 @@ class Bootstrap(object):
 
     # Return a dictionary from imported csv file
     def import_inventory_file(self) -> dict:
-        platform = 'ios'
         result = {}
         devices = {}
 

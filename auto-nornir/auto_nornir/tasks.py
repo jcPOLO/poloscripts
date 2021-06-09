@@ -1,31 +1,25 @@
 from typing import Dict, List
-
 from nornir.core import Task
-
 from helpers import check_directory
-from models import ios
+from auto_nornir.models.platform_factory import PlatformFactory
 
 
 def get_interfaces_status(task: Task) -> List[Dict[str, str]]:
-    r = ''
-    if task.host.platform == 'ios' or task.host.platform == 'nxos':
-        r = ios.get_interfaces_trunk(task)
-
-    return r
+    device = PlatformFactory().get_platform(task)
+    return device.get_interfaces_trunk()
 
 
 def get_version(task: Task):
-    r = ''
-    if task.host.platform == 'ios' or task.host.platform == 'nxos':
-        r = ios.get_version(task)
+    device = PlatformFactory().get_platform(task)
+    return device.get_version()
 
 
 def backup_config(task: Task, path: str = 'backups/') -> None:
     r = ''
     file = f'{task.host}.cfg'
     filename = f'{path}{file}'
-    if task.host.platform == 'ios' or task.host.platform == 'nxos':
-        r = ios.get_config(task)
+    device = PlatformFactory().get_platform(task)
+    r = device.get_config()
     if r:
         check_directory(filename)
         with open(filename, 'w') as f:
@@ -33,7 +27,10 @@ def backup_config(task: Task, path: str = 'backups/') -> None:
 
 
 def save_config(task: Task) -> None:
-    if task.host.platform == 'ios' or task.host.platform == 'nxos':
-        ios.save_config(task)
+    device = PlatformFactory().get_platform(task)
+    device.save_config()
 
 
+def get_facts(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.get_facts()
