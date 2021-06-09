@@ -11,6 +11,7 @@ from auto_nornir.helpers import configure_logging
 import getpass
 from typing import List
 import logging
+import output
 
 
 CFG_FILE = 'config.yaml'
@@ -88,7 +89,9 @@ def main() -> None:
     logger.info('----------- LOADING -----------\n')
 
     result = main_task(devices, selections)
+
     print_result(result)
+    output.facts_for_customer_csv(result)
 
     t1_stop = perf_counter()
     while result.failed_hosts:

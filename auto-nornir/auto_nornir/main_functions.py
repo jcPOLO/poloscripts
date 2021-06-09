@@ -23,20 +23,7 @@ def auto_nornir(
         get_version(task)
     if 'get_facts' in selections:
         logger.info("get_facts selected")
-        r = get_facts(task)
-        facts = r['facts']
-        hostname = facts['hostname']
-        os_version = facts['os_version']
-        serial_number = facts['serial_number']
-        model = facts['model']
-        r = {
-            'hostname': hostname,
-            'os_verssion': os_version,
-            'serial_number': serial_number,
-            'model': model
-        }
-        print("{},{},{},{}".format(hostname, os_version, serial_number, model))
-
+        get_facts(task)
     if 'save_config' in selections:
         logger.info("save_config selected")
         save_config(task)
@@ -47,7 +34,6 @@ def session_log(task: Task, path: str = 'outputs/') -> str:
         path = 'outputs/'
     file = f'{task.host}-output.txt'
     filename = f'{path}{file}'
-
     check_directory(path)
     group_object = task.host.groups[0]
     group_object.connection_options["netmiko"].extras["session_log"] = filename
