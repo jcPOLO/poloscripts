@@ -1,11 +1,12 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config, get_version, get_facts
+from tasks import backup_config, save_config, get_version, get_facts, basic_configuration
 from typing import List
 # import configparser
 import logging
 
 logger = logging.getLogger(__name__)
+FINAL_TEMPLATE = 'final.j2'
 
 
 def auto_nornir(
@@ -27,6 +28,9 @@ def auto_nornir(
     if 'save_config' in selections:
         logger.info("save_config selected")
         save_config(task)
+    if any('.j2' in s for s in selections):
+        logger.info("applying jinja2 template")
+        basic_configuration(task, FINAL_TEMPLATE)
 
 
 def session_log(task: Task, path: str = 'outputs/') -> str:

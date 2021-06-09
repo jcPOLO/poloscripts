@@ -3,9 +3,9 @@ from nornir.core import Nornir
 from nornir.core.task import AggregatedResult
 from nornir_utils.plugins.functions import print_result
 from auto_nornir.main_functions import auto_nornir
-from auto_nornir.models.Menu import Menu
-from auto_nornir.models.Bootstrap import Bootstrap
-# from auto_nornir.models.Filter import Filter
+from auto_nornir.models.menu import Menu
+from auto_nornir.models.bootstrap import Bootstrap
+from auto_nornir.models.filter import Filter
 from auto_nornir.helpers import configure_logging
 # from tqdm import tqdm
 import getpass
@@ -91,7 +91,9 @@ def main() -> None:
     result = main_task(devices, selections)
 
     print_result(result)
-    output.facts_for_customer_csv(result)
+    # ---------------------------------------------------
+    # output.facts_for_customer_csv(result)
+    # ---------------------------------------------------
 
     t1_stop = perf_counter()
     while result.failed_hosts:

@@ -5,7 +5,7 @@ import pathlib
 from typing import Dict
 from csv import DictReader
 from auto_nornir.helpers import check_directory, configure_logging
-from auto_nornir.models.Device import Device
+from auto_nornir.models.device import Device
 from auto_nornir.exceptions import ValidationException
 
 

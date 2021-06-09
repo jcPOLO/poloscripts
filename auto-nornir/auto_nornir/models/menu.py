@@ -1,23 +1,34 @@
 import os
 import sys
-from auto_nornir.helpers import is_int
+from auto_nornir.helpers import configure_logging, is_int
+from auto_nornir.models.platform import PlatformBase
+from auto_nornir.models.template import Template
 import logging
-from auto_nornir.helpers import configure_logging
 from typing import List
 
 logger = logging.getLogger(__name__)
+dir_path = os.path.dirname(os.path.realpath(__file__))
+TEMPLATES_DIR = dir_path+'/../templates/ios/'
 
 
 class Menu(object):
 
     configure_logging(logger)
+    method_list = [method for method in dir(PlatformBase) if method.startswith('__') is False]
+    templates = os.listdir(TEMPLATES_DIR)
 
     def __init__(self) -> None:
-        # TODO: Charge the options from device methods available
-        self.choices = {
-            "1": "get_facts",
-            "2": "get_config",
+
+        # TODO: Redo this madness (but working)
+        self.getters = {
+            i: self.method_list[i] for i in range(0, len(self.method_list))
         }
+        self.templates = {
+            i+len(self.method_list): self.templates[i] for i in range(0, len(self.templates))
+        }
+        self.choices = self.getters.copy()
+        self.choices.update(self.templates)
+
         # TODO: Create a class with buttons
         self.buttons = {
             "a": self.apply,
@@ -27,16 +38,19 @@ class Menu(object):
         }
         self.final_choices = []
 
-    @staticmethod
-    def display_menu() -> None:
+    def display_menu(self) -> None:
         os.system('clear')
         print("""
         Select the number one by one. When finished, press 'a' to run:
-
-        1. Get facts 
-        2. Get config
-        3. 
-
+        """)
+        for k, v in self.getters.items():
+            print("        {}. {}".format(k, v))
+        print("""
+        ---------------------------------- DANGER -------------------------------------
+        """)
+        for k, v in self.templates.items():
+            print("        {}. {}".format(k, v))
+        print("""
         -------------------------------------------------------------------------------
 
         a. Apply      z. Clear selections     w. Save config.
@@ -44,6 +58,7 @@ class Menu(object):
         e. Exit
 
         """)
+        print(dir_path)
 
     def display_final_choices(self) -> None:
         logger.info(f'Options selected: {self.final_choices}\n')
@@ -59,7 +74,7 @@ class Menu(object):
             choice = input("Enter an option: ")
             selection = self.validate_selection(choice)
             if isinstance(selection, int):
-                selection = self.choices.get(str(selection))
+                selection = self.choices.get(selection)
                 if selection not in self.final_choices:
                     self.final_choices.append(selection)
                     self.display_menu()
@@ -72,11 +87,13 @@ class Menu(object):
     # TODO: all
     def apply(self) -> List:
         if self.final_choices:
-            try:
-                logger.info(f"applied: -> {self.final_choices} <-")
-                return self.final_choices
-            except exit():
-                raise logger.error('---------------- Error ----------------')
+            if any('.j2' in s for s in self.final_choices):
+                all_templates = [s for s in self.final_choices if ".j2" in s]
+                logger.info("creating jinja2 final template")
+                t = Template(all_templates)
+                t.create_final_template()
+            logger.info(f"applied: -> {self.final_choices} <-")
+            return self.final_choices
         else:
             logger.error("{0} choices selected are not valid".format(self.final_choices))
 

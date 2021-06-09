@@ -1,5 +1,5 @@
 import pytest
-from auto_nornir.models.Device import Device
+from auto_nornir.models.device import Device
 from auto_nornir.exceptions import ValidationException
 
 

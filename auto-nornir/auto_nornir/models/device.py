@@ -1,6 +1,5 @@
-import ipaddress
-from ..exceptions import ValidationException
-from ..helpers import is_ip
+from auto_nornir.exceptions import ValidationException
+from auto_nornir.helpers import is_ip
 
 
 PLATFORMS = ['ios', 'nxos']
