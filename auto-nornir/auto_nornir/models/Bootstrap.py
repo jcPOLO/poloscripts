@@ -47,7 +47,7 @@ class Bootstrap(object):
             if not wrong_headers:
                 # create dict of Devices from CSV
                 for row in csv_reader:
-                    hostname = row['hostname']
+                    hostname = row['hostname'].strip()
                     if hostname not in devices.keys():
                         devices[hostname] = Device(**row)
             else:

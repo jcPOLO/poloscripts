@@ -32,6 +32,7 @@ class Device(object):
 
     @staticmethod
     def validate_platform(a):
+        a = a.strip()
         platforms = PLATFORMS
         if a not in platforms:
             platforms_str = ', '.join(platforms)
@@ -41,6 +42,7 @@ class Device(object):
 
     @staticmethod
     def validate_hostname(a):
+        a = a.strip()
         if not a:
             raise ValidationException("hostname cannot be empty")
         if not is_ip(a):
@@ -50,6 +52,7 @@ class Device(object):
 
     @staticmethod
     def validate_port(a):
+        a = a.strip()
         if 65535 > int(a) > 0:
             return int(a)
         if a is None:
