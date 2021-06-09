@@ -100,7 +100,6 @@ def main() -> None:
                 'on_failed': True,
                 'on_retry': True
             }
-
             result = main_task(devices, selections, **params)
             print_result(result)
         else:
