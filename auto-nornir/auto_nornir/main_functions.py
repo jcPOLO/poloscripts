@@ -23,12 +23,23 @@ def auto_nornir(
         get_version(task)
     if 'get_facts' in selections:
         logger.info("get_facts selected")
-        get_facts(task)
+        r = get_facts(task)
+        facts = r['facts']
+        hostname = facts['hostname']
+        os_version = facts['os_version']
+        serial_number = facts['serial_number']
+        model = facts['model']
+        r = {
+            'hostname': hostname,
+            'os_verssion': os_version,
+            'serial_number': serial_number,
+            'model': model
+        }
+        print("{},{},{},{}".format(hostname, os_version, serial_number, model))
+
     if 'save_config' in selections:
         logger.info("save_config selected")
         save_config(task)
-    else:
-        logger.warning("nothing selected")
 
 
 def session_log(task: Task, path: str = 'outputs/') -> str:
