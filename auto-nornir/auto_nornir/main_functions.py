@@ -13,7 +13,7 @@ def auto_nornir(
     task: Task,
     selections: List
 ) -> None:
-    # makes a log file output for every device accessed
+    # makes a log file output for every device accessed by netmiko config
     session_log(task)
     # backup running config
     backup_config(task)

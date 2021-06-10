@@ -102,13 +102,15 @@ class Menu(object):
         self.run()
         logger.info(f'Selected tasks cleared.\n')
 
-    def save(self) -> None:
+    def save(self) -> List:
         self.final_choices = []
         result = input('Are you sure you want to execute a write config? [y]')
         if result.lower().strip() not in ["yes", "y", "1", "ok", ""]:
             self.display_menu()
         else:
             logger.info(f'Applying write config...\n')
+            self.final_choices = ['save_config']
+            return self.final_choices
 
     def exit(self) -> None:
         self.final_choices = []
