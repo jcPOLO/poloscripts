@@ -1,14 +1,15 @@
 from nornir.core.filter import F
+from auto_nornir.models.device import Device
 import os
 import sys
 
 
-class Filter(object):
+class Filter:
 
-    platforms = ['ios']
-    keys = ['']
+    platforms = []
+    keys = []
 
-    def __init__(self, nr, filter_parameters=dict) -> None:
+    def __init__(self, nr) -> None:
 
         self.choices = {
             "1": self.by_platform,
@@ -17,13 +18,11 @@ class Filter(object):
             "z": self.clear,
             "s": self.show,
             "e": self.exit,
-
         }
 
         self.initial_nr = nr
         self.nr = nr
-        filter_parameters = filter_parameters or {}
-        self.filter_parameters = filter_parameters
+        self.set_parameters()
         self.run()
 
     @staticmethod
@@ -150,6 +149,7 @@ class Filter(object):
             msg = self.devices_filtered(self)
             self.run(msg)
 
+    # TODO: 0 usages in whole project...
     @staticmethod
     def show_filtering_options(nr, fields=dict):
         if fields:
@@ -158,3 +158,9 @@ class Filter(object):
             devices = nr.filter(F(groups__contains="ios"))
         print(devices.inventory.hosts.keys())
         pass
+
+    @classmethod
+    def set_parameters(cls):
+        cls.platforms = Device.get_devices_platform()
+        cls.keys = Device.get_devices_data_keys()
+

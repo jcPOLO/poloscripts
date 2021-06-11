@@ -2,11 +2,30 @@ from auto_nornir.exceptions import ValidationException
 from auto_nornir.helpers import is_ip
 
 
+# supported platforms at the moment
 PLATFORMS = ['ios', 'nxos']
 
 
 class Device(object):
+    """
+    Class to validate every devices field loaded from CSV to YAML SimpleInventory
 
+    Args:
+        hostname (str): Device management IP address
+        platform (str): Device nornir device_type
+        port (int): Connecting port for management IP
+
+    Attributes:
+        groups (list): Associated group belonged
+        data (dict): Extra data associated to the device
+        devices (list): Device object generator counter
+        platforms (list): Total device platforms registered in inventory.
+
+    """
+    devices = []
+    platforms = []
+
+    # TODO: not the best way to create groups.
     def __init__(
             self,
             hostname,
@@ -14,20 +33,17 @@ class Device(object):
             port='22',
             **kwargs
     ):
-        """
-        Args:
-            hostname (str): Device management IP address
-            platform (str): Device nornir device_type
-            port (int): Connecting port for management IP
-            name (str): Device hostname
-        """
-
         self.hostname = self.validate_hostname(hostname)
         self.platform = self.validate_platform(platform)
         self.port = self.validate_port(port)
         self.groups = [self.platform]
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+        self.data = kwargs
+        # for k, v in kwargs.items():
+        #     setattr(self, k, v)
+
+        self.devices = self.devices.append(self)
+        self.platforms = self.platforms.append(self.platform)
+        self.__dict__ = self.device_dict()
 
     @staticmethod
     def validate_platform(a):
@@ -41,19 +57,49 @@ class Device(object):
 
     @staticmethod
     def validate_hostname(a):
-        a = a.strip()
-        if not a:
-            raise ValidationException("hostname cannot be empty")
-        if not is_ip(a):
-            message = "hostname '{}' must be a valid IPv4 address".format(a)
-            raise ValidationException("fail-config", message)
-        return a
+        try:
+            a = a.strip()
+            if not a:
+                message = "hostname '{}' hostname cannot be empty".format(a)
+                raise ValidationException("fail-config", message)
+            if is_ip(a):
+                return a
+        except AttributeError:
+            pass
+        message = "hostname '{}' must be a valid IPv4 address".format(a)
+        raise ValidationException("fail-config", message)
 
     @staticmethod
     def validate_port(a):
         a = a.strip()
-        if 65535 > int(a) > 0:
-            return int(a)
-        if a is None:
-            message = "port '{}' is not a valid port number".format(a)
-            raise ValidationException("fail-config", message)
+        try:
+            if 65535 > int(a) > 0:
+                return int(a)
+        except ValueError:
+            pass
+        message = "port '{}' is not a valid port number".format(a)
+        raise ValidationException("fail-config", message)
+
+
+    @classmethod
+    def get_devices(cls):
+        return cls.devices
+
+    @classmethod
+    def get_devices_data_keys(cls):
+        return cls.devices[0].data.keys()
+
+    @classmethod
+    def get_devices_platform(cls):
+        return cls.platforms
+
+    def device_dict(self):
+        return {
+            'hostname': self.hostname,
+            'platform': self.platform,
+            'port': self.port,
+            'groups': [
+                self.platform
+            ],
+            'data': self.data
+        }

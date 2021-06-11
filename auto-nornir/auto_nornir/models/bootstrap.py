@@ -27,6 +27,7 @@ class Bootstrap(object):
         self.csv_file = pathlib.Path(csv_file).expanduser()
         self.encoding = encoding
         # self.load_inventory()
+        self.data_keys = {}
 
     def get_ini_vars(self) -> configparser:
         if self.ini_file.exists():

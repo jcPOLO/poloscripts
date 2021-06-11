@@ -20,7 +20,7 @@ def test_ensure_device_instance_is_valid():
 
     assert device.platform == platform
     assert device.hostname == hostname
-    assert device.serial_number == serial_number
+    assert device.data['serial_number'] == serial_number
     assert device.port == int(port)
 
 
@@ -31,35 +31,54 @@ def test_ensure_device_instance_has_valid_ip():
         "platform": 'ios',
         "serial_number": '12345',
     }
-
     with pytest.raises(ValidationException):
         Device(**device_kwargs)
+
+    device_kwargs["hostname"] = ''
+    with pytest.raises(ValidationException):
+        Device(**device_kwargs)
+
+    device_kwargs["hostname"] = None
+    with pytest.raises(ValidationException):
+        Device(**device_kwargs)
+
+    device_kwargs["hostname"] = '1.1.1.1'
+    device = Device(**device_kwargs)
+    assert device.hostname == '1.1.1.1'
 
 
 def test_ensure_device_instance_has_valid_platform():
 
     device_kwargs = {
         "hostname": '1.1.1.1',
-        "platform": 'huawei',
+        "platform": 'anchoas',
         "serial_number": '12345',
     }
 
     with pytest.raises(ValidationException):
         Device(**device_kwargs)
+
+    device_kwargs["platform"] = 'ios'
+    device = Device(**device_kwargs)
+    assert device.platform == 'ios'
 
 
 def test_ensure_device_instance_has_valid_port():
 
     device_kwargs = {
         "hostname": '1.1.1.1',
-        "platform": 'huawei',
+        "platform": 'ios',
         "serial_number": '12345',
-        "port": '23'
+        "port": '70000'
     }
 
     with pytest.raises(ValidationException):
         Device(**device_kwargs)
 
+    device_kwargs["port"] = 'abc'
+
+    with pytest.raises(ValidationException):
+        Device(**device_kwargs)
 
 def test_ensure_device_instance_has_extra_data():
 
@@ -71,4 +90,4 @@ def test_ensure_device_instance_has_extra_data():
 
     device = Device(**device_kwargs)
 
-    assert device.serial_number == '12345'
+    assert device.data['serial_number'] == '12345'

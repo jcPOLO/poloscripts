@@ -7,6 +7,7 @@ from auto_nornir.models.menu import Menu
 from auto_nornir.models.bootstrap import Bootstrap
 from auto_nornir.models.filter import Filter
 from auto_nornir.helpers import configure_logging
+from auto_nornir.models.device import Device
 # from tqdm import tqdm
 import getpass
 from typing import List
@@ -14,17 +15,11 @@ import logging
 import output
 
 
+logger = logging.getLogger(__name__)
 CFG_FILE = 'config.yaml'
 
-logger = logging.getLogger(__name__)
 
-
-def main_task(
-    devices: 'Nornir',
-    selections: List,
-    **kwargs
-) -> 'AggregatedResult':
-
+def main_task(devices: 'Nornir', selections: List, **kwargs) -> 'AggregatedResult':
     result = devices.run(
         task=auto_nornir,
         selections=selections,
@@ -65,11 +60,10 @@ def main() -> None:
 
     # initialize Nornir object
     nr = InitNornir(config_file=CFG_FILE)
-    devices = nr
 
     # show filter options menu and return device inventory filtered
-    # filter_obj = Filter(nr)
-    # devices = filter_obj.nr
+    filter_obj = Filter(nr)
+    devices = filter_obj.nr
 
     # show the main menu
     menu_obj = Menu()
