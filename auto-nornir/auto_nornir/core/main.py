@@ -2,18 +2,15 @@ from nornir import InitNornir
 from nornir.core import Nornir
 from nornir.core.task import AggregatedResult
 from nornir_utils.plugins.functions import print_result
-from auto_nornir.main_functions import auto_nornir
-from auto_nornir.models.menu import Menu
-from auto_nornir.models.bootstrap import Bootstrap
-from auto_nornir.models.filter import Filter
-from auto_nornir.helpers import configure_logging
-from auto_nornir.models.device import Device
+from auto_nornir.core.main_functions import auto_nornir
+from auto_nornir.core.models.menu import Menu
+from auto_nornir.core.models.bootstrap import Bootstrap
+from auto_nornir.core.models.filter import Filter
+from auto_nornir.core.helpers import configure_logging
 # from tqdm import tqdm
 import getpass
 from typing import List
 import logging
-import output
-
 
 logger = logging.getLogger(__name__)
 CFG_FILE = 'config.yaml'
@@ -72,6 +69,7 @@ def main() -> None:
     username = input("\nUsername:")
     password = getpass.getpass()
 
+    # TODO: test specific user/pass should override these
     devices.inventory.defaults.password = password
     devices.inventory.defaults.username = username
 

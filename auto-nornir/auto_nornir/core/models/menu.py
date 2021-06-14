@@ -1,8 +1,8 @@
 import os
 import sys
-from auto_nornir.helpers import configure_logging, is_int
-from auto_nornir.models.platform import PlatformBase
-from auto_nornir.models.template import Template
+from auto_nornir.core.helpers import configure_logging, is_int
+from auto_nornir.core.models.platform import PlatformBase
+from auto_nornir.core.models.template import Template
 import logging
 from typing import List
 

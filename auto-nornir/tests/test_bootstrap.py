@@ -1,6 +1,6 @@
 import pytest
-from auto_nornir.models.bootstrap import Bootstrap
-from auto_nornir.exceptions import ValidationException
+from auto_nornir.core.models.bootstrap import Bootstrap
+from auto_nornir.core.exceptions import ValidationException
 from io import StringIO
 import csv
 import os

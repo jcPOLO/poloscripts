@@ -1,6 +1,6 @@
 import pytest
-from auto_nornir.models.device import Device
-from auto_nornir.exceptions import ValidationException
+from auto_nornir import Device
+from auto_nornir.core.exceptions import ValidationException
 
 
 def test_ensure_device_instance_is_valid():

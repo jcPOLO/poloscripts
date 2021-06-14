@@ -4,9 +4,9 @@ import yaml
 import pathlib
 from typing import Dict
 from csv import DictReader
-from auto_nornir.helpers import check_directory, configure_logging
-from auto_nornir.models.device import Device
-from auto_nornir.exceptions import ValidationException
+from auto_nornir.core.helpers import check_directory, configure_logging
+from auto_nornir.core.models.device import Device
+from auto_nornir.core.exceptions import ValidationException
 
 
 logger = logging.getLogger(__name__)
@@ -16,6 +16,7 @@ class Bootstrap(object):
 
     configure_logging(logger)
 
+    # TODO: maybe csv file should be optional. It could be a correct yaml as well.
     def __init__(
         self,
         ini_file: str = '../.global.ini',

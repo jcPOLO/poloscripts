@@ -1,5 +1,5 @@
 from nornir.core.filter import F
-from auto_nornir.models.device import Device
+from auto_nornir.core.models.device import Device
 import os
 import sys
 

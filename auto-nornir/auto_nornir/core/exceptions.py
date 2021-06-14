@@ -1,5 +1,5 @@
 import logging
-from auto_nornir.helpers import configure_logging
+from auto_nornir.core.helpers import configure_logging
 
 logger = logging.getLogger(__name__)
 

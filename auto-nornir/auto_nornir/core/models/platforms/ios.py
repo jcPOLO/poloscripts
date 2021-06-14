@@ -1,7 +1,7 @@
 from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config
 from nornir.core.task import Result, Task
 from typing import List, Dict
-from auto_nornir.models.platform import PlatformBase
+from auto_nornir.core.models.platform import PlatformBase
 import logging
 
 
