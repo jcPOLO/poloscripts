@@ -3,7 +3,7 @@ from nornir.core import Task
 from nornir_jinja2.plugins.tasks import template_file
 from nornir_netmiko.tasks import netmiko_send_config
 from helpers import check_directory
-from auto_nornir.models.platform_factory import PlatformFactory
+from auto_nornir.models.platforms.platform_factory import PlatformFactory
 import configparser
 import os
 

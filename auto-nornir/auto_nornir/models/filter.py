@@ -163,4 +163,3 @@ class Filter:
     def set_parameters(cls):
         cls.platforms = Device.get_devices_platform()
         cls.keys = Device.get_devices_data_keys()
-

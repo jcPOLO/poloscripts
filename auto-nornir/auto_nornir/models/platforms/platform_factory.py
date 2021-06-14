@@ -1,5 +1,5 @@
-from auto_nornir.models.ios import Ios
-from auto_nornir.models.huawei import Huawei
+from auto_nornir.models.platforms.ios import Ios
+from auto_nornir.models.platforms.huawei import Huawei
 from nornir.core.task import Task
 
 IOS = 'ios'

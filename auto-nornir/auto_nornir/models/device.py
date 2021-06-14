@@ -43,7 +43,6 @@ class Device(object):
 
         self.devices = self.devices.append(self)
         self.platforms = self.platforms.append(self.platform)
-        self.__dict__ = self.device_dict()
 
     @staticmethod
     def validate_platform(a):
@@ -71,15 +70,16 @@ class Device(object):
 
     @staticmethod
     def validate_port(a):
-        a = a.strip()
         try:
+            a = a.strip()
             if 65535 > int(a) > 0:
                 return int(a)
+        except AttributeError:
+            pass
         except ValueError:
             pass
         message = "port '{}' is not a valid port number".format(a)
         raise ValidationException("fail-config", message)
-
 
     @classmethod
     def get_devices(cls):
@@ -93,7 +93,7 @@ class Device(object):
     def get_devices_platform(cls):
         return cls.platforms
 
-    def device_dict(self):
+    def _device_dict(self):
         return {
             'hostname': self.hostname,
             'platform': self.platform,
@@ -103,3 +103,7 @@ class Device(object):
             ],
             'data': self.data
         }
+
+    def __iter__(self):
+        for k, v in self._device_dict().items():
+            yield k, v
