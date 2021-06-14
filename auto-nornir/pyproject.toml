@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "auto-nornir"
+version = "0.1.0"
+description = ""
+authors = ["jcPOLO <jcpologonzalez@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+nornir = "^3.1.1"
+nornir-napalm = "^0.1.2"
+nornir-netmiko = "^0.1.1"
+nornir-jinja2 = "^0.1.2"
+nornir-utils = "^0.1.2"
+tqdm = "^4.61.0"
+ntc-templates = "^2.0.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+ipdb = "^0.13.9"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
