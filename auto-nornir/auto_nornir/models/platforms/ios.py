@@ -87,3 +87,12 @@ class Ios(PlatformBase):
     def save_config(self) -> Result:
         r = self.task.run(task=netmiko_save_config).result
         return r
+
+    def get_config_section(self) ->  str:
+        r = self.task.run(
+            task=netmiko_send_command,
+            name=GET_CONFIG_MSG.format(self.task.host, self.task.host.hostname),
+            command_string=f'{GET_CONFIG_CMD} | i 213.229.183',
+            severity_level=logging.DEBUG,
+            ).result
+        return r

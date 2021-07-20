@@ -1,0 +1,9 @@
+!
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+line vty 0 4
+ transport input ssh
+line vty 5 15
+ transport input ssh
+!

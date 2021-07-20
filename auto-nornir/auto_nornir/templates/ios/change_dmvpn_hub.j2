@@ -1,0 +1,15 @@
+!
+no ip sla 201
+!
+ip sla 201
+ icmp-echo {{ NEW_PUBLIC_IP }} source-interface GigabitEthernet0/0/1
+ vrf IWAN-SECONDARY
+ threshold 3000
+ timeout 3000
+ frequency 10
+!
+ip sla schedule 201 life forever start-time now
+!
+int tun200 
+ ip nhrp nhs 172.29.2.1 nbma {{ NEW_PUBLIC_IP }} multicast
+!
