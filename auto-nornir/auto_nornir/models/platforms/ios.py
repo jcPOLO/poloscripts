@@ -88,6 +88,7 @@ class Ios(PlatformBase):
         r = self.task.run(task=netmiko_save_config).result
         return r
 
+    # netmiko checks the md5 signature after upload with a different ssh control session than the scp one.
     def software_upgrade(self) -> Result:
         r = self.task.run(
             task=netmiko_file_transfer,
@@ -96,3 +97,7 @@ class Ios(PlatformBase):
             direction='put'
             ).result
         return r
+
+    # TODO: remove exec timeout before making long tasks as it can get you out of the device before ending. Maybe it is handled already by nornir... need to check it.
+    def remove_exec_timeout(self) -> Result:
+        pass
