@@ -91,8 +91,8 @@ class Ios(PlatformBase):
     def software_upgrade(self) -> Result:
         r = self.task.run(
             task=netmiko_file_transfer,
-            source_file=self.task.host.image,
-            dest_file=self.task.host.image,
+            source_file=self.task.host.get('image'),
+            dest_file=self.task.host.image.get('image'),
             direction='put'
             ).result
         return r
