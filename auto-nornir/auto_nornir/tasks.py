@@ -74,5 +74,5 @@ def basic_configuration(
              )
 
 def software_upgrade(task: Task):
-    device = PlatformFactory().software_upgrade(task)
+    device = PlatformFactory().get_platform(task)
     return device.software_upgrade()
