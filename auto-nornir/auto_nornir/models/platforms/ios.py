@@ -1,4 +1,4 @@
-from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config
+from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config, netmiko_file_transfer
 from nornir.core.task import Result, Task
 from typing import List, Dict
 from auto_nornir.models.platform import PlatformBase
@@ -86,4 +86,13 @@ class Ios(PlatformBase):
 
     def save_config(self) -> Result:
         r = self.task.run(task=netmiko_save_config).result
+        return r
+
+    def software_upgrade(self) -> Result:
+        r = self.task.run(
+            task=netmiko_file_transfer,
+            source_file=self.task.host.image,
+            dest_file=self.task.host.image,
+            direction='put'
+            ).result
         return r

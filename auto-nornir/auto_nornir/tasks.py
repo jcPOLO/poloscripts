@@ -72,3 +72,7 @@ def basic_configuration(
              config_commands=task.host["config"].splitlines(),
              #severity_level=logging.DEBUG,
              )
+
+def software_upgrade(task: Task):
+    device = PlatformFactory().software_upgrade(task)
+    device.software_upgrade()
