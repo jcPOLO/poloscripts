@@ -36,3 +36,6 @@ class PlatformBase:
 
     def save_config(self):
         pass
+
+    def software_upgrade(self):
+        pass
