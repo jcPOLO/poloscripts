@@ -75,4 +75,4 @@ def basic_configuration(
 
 def software_upgrade(task: Task):
     device = PlatformFactory().software_upgrade(task)
-    device.software_upgrade()
+    return device.software_upgrade()

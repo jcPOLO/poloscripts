@@ -1,6 +1,6 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config, get_version, get_facts, basic_configuration
+from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, software_upgrade
 from typing import List
 # import configparser
 import logging
@@ -28,6 +28,9 @@ def auto_nornir(
     if 'save_config' in selections:
         logger.info("save_config selected")
         save_config(task)
+    if 'software_upgrade' in selections:
+        logger.info("software_upgrade selected")
+        software_upgrade(task)
     if any('.j2' in s for s in selections):
         logger.info("applying jinja2 template")
         basic_configuration(task, FINAL_TEMPLATE)
