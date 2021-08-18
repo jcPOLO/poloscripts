@@ -92,7 +92,7 @@ class Ios(PlatformBase):
         r = self.task.run(
             task=netmiko_file_transfer,
             source_file=self.task.host.get('image'),
-            dest_file=self.task.host.image.get('image'),
+            dest_file=self.task.host.get('image'),
             direction='put'
             ).result
         return r
