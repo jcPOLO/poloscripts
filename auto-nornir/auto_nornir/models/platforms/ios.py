@@ -120,5 +120,8 @@ class Ios(PlatformBase):
             output += net_connect.send_command("y", expect_string=r"elapsed time")
             output += net_connect.exit_config_mode()
             return output
-        r = self.task.run(task=netmiko_send_task).result
+        r = self.task.run(
+            task=netmiko_send_task,
+            severity_level=logging.DEBUG,
+            ).result
         return r
