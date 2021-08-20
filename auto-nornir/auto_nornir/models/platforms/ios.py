@@ -1,4 +1,4 @@
-from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config
+from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config, netmiko_file_transfer
 from nornir.core.task import Result, Task
 from typing import List, Dict
 from auto_nornir.models.platform import PlatformBase
@@ -87,6 +87,20 @@ class Ios(PlatformBase):
     def save_config(self) -> Result:
         r = self.task.run(task=netmiko_save_config).result
         return r
+
+    # netmiko checks the md5 signature after upload with a different ssh control session than the scp one.
+    def software_upgrade(self) -> Result:
+        r = self.task.run(
+            task=netmiko_file_transfer,
+            source_file=self.task.host.get('image'),
+            dest_file=self.task.host.get('image'),
+            direction='put'
+            ).result
+        return r
+
+    # TODO: remove exec timeout before making long tasks as it can get you out of the device before ending. Maybe it is handled already by nornir... need to check it.
+    def remove_exec_timeout(self) -> Result:
+        pass
 
     def get_config_section(self) ->  str:
         r = self.task.run(
