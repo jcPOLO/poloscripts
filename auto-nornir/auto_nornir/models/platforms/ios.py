@@ -101,3 +101,15 @@ class Ios(PlatformBase):
     # TODO: remove exec timeout before making long tasks as it can get you out of the device before ending. Maybe it is handled already by nornir... need to check it.
     def remove_exec_timeout(self) -> Result:
         pass
+
+    def set_rsa(self) -> Result:
+        def netmiko_send_task(task):
+            # Manually create Netmiko connection
+            net_connect = self.task.host.get_connection("netmiko", self.task.nornir.config)
+            output = net_connect.config_mode()
+            output += net_connect.send_command("crypto key zeroize rsa", expect_string=r"you really want to remove")
+            output += net_connect.send_command("y", expect_string=r"elapsed time")
+            output += net_connect.exit_config_mode()
+            return output
+        r = self.task.run(task=netmiko_send_task).result
+        return r
