@@ -113,7 +113,12 @@ class Ios(PlatformBase):
 
     def set_rsa(self) -> Result:
         def netmiko_send_task(task):
-            # Manually create Netmiko connection
+            # log all netmiko communication with the device in test.log
+            # import logging
+            # logging.basicConfig(filename='test.log', level=logging.DEBUG)
+            # logger = logging.getLogger("netmiko")
+
+            # Manually create Netmiko connection. Needs fast_cli to False in nornir groups.yaml - ios netmiko extra option
             net_connect = self.task.host.get_connection("netmiko", self.task.nornir.config)
             output = net_connect.config_mode()
             output += net_connect.send_command("crypto key zeroize rsa", expect_string=r"you really want to remove")
