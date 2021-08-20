@@ -8,3 +8,8 @@ def facts_for_customer_csv(result):
         serial_number = facts['serial_number']
         model = facts['model']
         print("{};{};{};{};{}".format(h, hostname, os_version, serial_number, model))
+
+def get_interface_description(result):
+    for h in result.keys():
+        r = result[h][2]
+        print("{};{}".format(h,r))

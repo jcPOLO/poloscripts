@@ -1,6 +1,6 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, software_upgrade
+from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, get_config_section, software_upgrade
 from typing import List
 # import configparser
 import logging
@@ -22,6 +22,9 @@ def auto_nornir(
     if 'get_version' in selections:
         logger.info("get_version selected")
         get_version(task)
+    if 'get_config_section' in selections:
+        get_config_section(task)
+        
     if 'get_facts' in selections:
         logger.info("get_facts selected")
         get_facts(task)

@@ -24,7 +24,7 @@ class Menu(object):
             i: self.method_list[i] for i in range(0, len(self.method_list))
         }
         self.templates = {
-            i+len(self.method_list): self.templates[i] for i in range(0, len(self.templates))
+            i+len(self.method_list): self.templates[i] for i in range(0, len(self.templates)) if self.templates[i] != 'final.j2'
         }
         self.choices = self.getters.copy()
         self.choices.update(self.templates)

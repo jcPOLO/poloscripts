@@ -101,3 +101,12 @@ class Ios(PlatformBase):
     # TODO: remove exec timeout before making long tasks as it can get you out of the device before ending. Maybe it is handled already by nornir... need to check it.
     def remove_exec_timeout(self) -> Result:
         pass
+
+    def get_config_section(self) ->  str:
+        r = self.task.run(
+            task=netmiko_send_command,
+            name=GET_CONFIG_MSG.format(self.task.host, self.task.host.hostname),
+            command_string=f'{GET_CONFIG_CMD} | i 213.229.183',
+            severity_level=logging.DEBUG,
+            ).result
+        return r

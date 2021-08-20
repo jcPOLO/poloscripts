@@ -88,6 +88,9 @@ def main() -> None:
     # ---------------------------------------------------
     # output.facts_for_customer_csv(result)
     # ---------------------------------------------------
+    # customer / Public IP change is dmvpn
+    # output.get_interface_description(result)
+
 
     t1_stop = perf_counter()
     while result.failed_hosts:

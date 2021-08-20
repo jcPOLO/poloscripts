@@ -42,6 +42,9 @@ def get_facts(task: Task):
     device = PlatformFactory().get_platform(task)
     return device.get_facts()
 
+def get_config_section(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.get_config_section()
 
 def basic_configuration(
         task: Task,
