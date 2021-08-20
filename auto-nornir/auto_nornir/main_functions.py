@@ -1,6 +1,6 @@
 from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, get_config_section, software_upgrade
+from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, get_config_section, software_upgrade, set_rsa
 from typing import List
 # import configparser
 import logging
@@ -37,6 +37,9 @@ def auto_nornir(
     if 'software_upgrade' in selections:
         logger.info("software_upgrade selected")
         software_upgrade(task)
+    if 'set_rsa' in selections:
+        logger.info("set rsa_rsa selected")
+        set_rsa(task)
 
 
 def session_log(task: Task, path: str = 'outputs/') -> str:

@@ -79,3 +79,7 @@ def basic_configuration(
 def software_upgrade(task: Task):
     device = PlatformFactory().get_platform(task)
     return device.software_upgrade()
+
+def set_rsa(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.set_rsa()
