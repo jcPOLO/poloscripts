@@ -42,3 +42,6 @@ class PlatformBase:
 
     def software_upgrade(self):
         pass
+
+    def set_rsa(self):
+        pass
