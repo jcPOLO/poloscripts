@@ -22,6 +22,9 @@ class PlatformBase:
     def get_config(self):
         pass
 
+    def get_config_section(self):
+        pass
+
     def get_interfaces_status(self):
         pass
 
