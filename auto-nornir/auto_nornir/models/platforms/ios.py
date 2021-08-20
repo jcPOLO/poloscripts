@@ -117,7 +117,8 @@ class Ios(PlatformBase):
             net_connect = self.task.host.get_connection("netmiko", self.task.nornir.config)
             output = net_connect.config_mode()
             output += net_connect.send_command("crypto key zeroize rsa", expect_string=r"you really want to remove")
-            output += net_connect.send_command("y", expect_string=r"elapsed time")
+            output += net_connect.send_command("y", expect_string=r"#")
+            output += net_connect.send_command("crypto key generate rsa modulus 2048", expect_string=r"OK")
             output += net_connect.exit_config_mode()
             return output
         r = self.task.run(
