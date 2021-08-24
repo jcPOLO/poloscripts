@@ -7,7 +7,7 @@ ios:
   connection_options:
     netmiko:
       extras:
-        fast_clie: False
+        fast_cli: False
 
 nxos:
   connection_options:

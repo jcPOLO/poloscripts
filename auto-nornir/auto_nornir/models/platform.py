@@ -12,7 +12,7 @@ class PlatformBase:
             task=napalm_get,
             name=f'FACTs PARA: {self.task.host}',
             getters=['facts'],
-            severity_level=logging.DEBUG,
+            # severity_level=logging.DEBUG,
         ).result
         return r
 
@@ -44,4 +44,7 @@ class PlatformBase:
         pass
 
     def set_rsa(self):
+        pass
+
+    def get_dir(self):
         pass

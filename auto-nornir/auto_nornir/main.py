@@ -24,6 +24,7 @@ def main_task(devices: 'Nornir', selections: List, **kwargs) -> 'AggregatedResul
         task=auto_nornir,
         selections=selections,
         name=f'CONTAINER TASK',
+        # severity_level=logging.DEBUG,
         **kwargs
     )
     return result
