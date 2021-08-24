@@ -30,3 +30,6 @@ class AutoNornirException(Exception):
 
 class ValidationException(AutoNornirException):
     pass
+
+class RuntimeErrorException(AutoNornirException):
+    pass

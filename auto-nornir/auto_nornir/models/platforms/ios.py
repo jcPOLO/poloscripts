@@ -3,6 +3,7 @@ from nornir.core.task import Result, Task
 from typing import List, Dict
 from auto_nornir.models.platform import PlatformBase
 from helpers import HumanBytes
+from auto_nornir.exceptions import RuntimeErrorException
 import os
 import logging
 
@@ -125,12 +126,12 @@ class Ios(PlatformBase):
             ).result
         return r
 
-    @staticmethod
-    def polo(task):
-        return Result(
-                host=task.host,
-                result=f"Ejecutando transferencia de archivos..."
-            )
+    # @staticmethod
+    # def polo(task):
+    #     return Result(
+    #             host=task.host,
+    #             result=f"Ejecutando transferencia de archivos..."
+    #         )
 
     # netmiko checks the md5 signature after upload with a different ssh control session than the scp one.
     def software_upgrade(self) -> Result:
@@ -182,9 +183,8 @@ class Ios(PlatformBase):
                 result=f"Space needed: {HumanBytes.format(file_size)}\nFree space: {HumanBytes.format(space_available)}"
             )
         else:
-            raise Exception(
-                f"ERROR:\n \
+            message = f"ERROR:\n \
                     Space needed: {HumanBytes.format(file_size)}\n \
-                    Free space: {HumanBytes.format(space_available)} \
+                    Free space: {HumanBytes.format(space_available)}\n \
                     Total size: {HumanBytes.format(total_size)}"
-            )
+            raise RuntimeErrorException("fail-config", message)
