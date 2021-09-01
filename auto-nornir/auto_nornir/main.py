@@ -86,12 +86,10 @@ def main() -> None:
     result = main_task(devices, selections)
 
     print_result(result)
-    # ---------------------------------------------------
-    # output.facts_for_customer_csv(result)
-    # ---------------------------------------------------
-    # customer / Public IP change is dmvpn
-    # output.get_interface_description(result)
 
+    # ---------------------------------------------------
+    output.facts_for_customer_csv(result)
+    # ---------------------------------------------------
 
     t1_stop = perf_counter()
     while result.failed_hosts:
