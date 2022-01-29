@@ -1,0 +1,22 @@
+198.18.18.10:
+  data:
+    especies: boquerones
+    site: huesca
+  devices: null
+  groups:
+  - ios
+  hostname: 198.18.18.10
+  platform: ios
+  platforms: null
+  port: 22
+198.18.18.49:
+  data:
+    especies: anchoas
+    site: zaragoza
+  devices: null
+  groups:
+  - ios
+  hostname: 198.18.18.49
+  platform: ios
+  platforms: null
+  port: 22
