@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}
+Filtering menu
+{% endblock %}
+{% block content %}
+<h1>This is the filtering menu</h1>
+<h1 align="center">Devices</h1>
+<ul class="list-group list-group-flush" id="notes">
+    {% for device in devices %}
+    <li class="list-group-item">{{ device }}</list>
+        <button type="button" class="btn-close" onClick="" aria-label="Close"></button>
+    {% endfor %}
+</ul>
+<form method="POST">
+    <textarea name="note" id="note" class="form-control"></textarea>
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add Note</button>
+    </div>
+</form>
+{% endblock %}

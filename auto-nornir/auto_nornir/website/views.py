@@ -7,6 +7,7 @@ from . import db
 from .models import Note
 from werkzeug.utils import secure_filename
 from core.models.bootstrap import Bootstrap
+from core.models.device import Device
 
 
 views = Blueprint('views', __name__)
@@ -84,4 +85,6 @@ def auto_nornir():
     if request.method == 'GET':
         bootstrap = Bootstrap()
         bootstrap.load_inventory()
-        return render_template("filter.html", user=current_user)
+        devices = Device.get_devices()
+        keys = Device.get_devices_data_keys()
+        return render_template("filter.html", devices=devices, keys=keys)

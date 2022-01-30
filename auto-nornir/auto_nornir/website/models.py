@@ -16,3 +16,12 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))
     first_name = db.Column(db.String(150))
     notes = db.relationship('Note') # 1:N
+
+
+class Device(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    hostname = db.Column(db.String(150), unique=True)
+    platform = db.Column(db.String(150))
+    site = db.Column(db.String(150))
+    company = db.Column(db.String(150))
+
