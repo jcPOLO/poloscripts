@@ -1,11 +1,12 @@
+import json
+import os
 from bcrypt import re
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
 from . import db
 from .models import Note
 from werkzeug.utils import secure_filename
-import json
-import os
+from core.models.bootstrap import Bootstrap
 
 
 views = Blueprint('views', __name__)
@@ -54,30 +55,33 @@ def delete_note():
             db.session.commit()
     return jsonify({})
 
-@views.route('/upload', methods=['POST'])
+@views.route('/upload', methods=['POST', 'GET'])
 @login_required
 def upload_file():
-    print(os.path.join(current_app.config['UPLOAD_FOLDER']))
-    print('si entra12312312')
     if request.method == 'POST':
-        print('si entra123123123')
         # check if the post request has the file part
         if 'file' not in request.files:
-            print('si entra0')
-            flash('No file part', category='warning')
+            flash('No file part', category='error')
             return redirect(request.url)
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            print('si entra2')
-            flash('No selected file', category='info')
+            flash("You haven't selected any file", category='warning')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            print('si entra3')
             filename = secure_filename(file.filename)
             file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
             flash('File uploaded', category='success')
-            return redirect(url_for('views.home'))
-        print('nada')
+            return redirect(url_for('views.auto_nornir'))
+        else:
+            flash('File type must be csv or txt', category='error')
     return redirect(url_for('views.home'))
+
+@views.route('/auto-nornir', methods=['POST', 'GET'])
+@login_required
+def auto_nornir():
+    if request.method == 'GET':
+        bootstrap = Bootstrap()
+        bootstrap.load_inventory()
+        return render_template("filter.html", user=current_user)
