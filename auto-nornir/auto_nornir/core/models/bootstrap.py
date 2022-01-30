@@ -13,10 +13,23 @@ logger = logging.getLogger(__name__)
 
 
 class Bootstrap(object):
+    """
+    Class to create host.yaml Simple Inventory file and loading ini file with jinja2 config template vars
 
+    Args:
+        ini_file (str): Path to the ini file
+        csv_file (str): Path to inventory file
+        encoding (str): csv encoding type
+
+    Attributes:
+        groups (list): Associated group belonged
+        data (dict): Extra data associated to the device
+        devices (list): Device object generator counter
+        platforms (list): Total device platforms registered in inventory.
+
+    """
     configure_logging(logger)
 
-    # TODO: maybe csv file should be optional. It could be a correct yaml as well.
     def __init__(
         self,
         ini_file: str = '../.global.ini',
@@ -28,7 +41,7 @@ class Bootstrap(object):
         self.csv_file = pathlib.Path(csv_file).expanduser()
         self.encoding = encoding
         # self.load_inventory()
-        self.data_keys = {}
+        self.data_keys = set()
 
     def get_ini_vars(self) -> configparser:
         if self.ini_file.exists():
@@ -45,6 +58,7 @@ class Bootstrap(object):
             csv_reader = DictReader(csv_file)
             fields = 'hostname'
             csv_fields = set(csv_reader.fieldnames)
+            self.data_keys = csv_fields
             wrong_headers = False if fields in csv_fields else True
             if not wrong_headers:
                 # create dict of Devices from CSV

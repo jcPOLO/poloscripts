@@ -7,10 +7,13 @@ from auto_nornir.core.models.menu import Menu
 from auto_nornir.core.models.bootstrap import Bootstrap
 from auto_nornir.core.models.filter import Filter
 from auto_nornir.core.helpers import configure_logging
+from auto_nornir.core.models.device import Device
 # from tqdm import tqdm
 import getpass
 from typing import List
 import logging
+import output
+
 
 logger = logging.getLogger(__name__)
 CFG_FILE = 'config.yaml'
@@ -21,6 +24,7 @@ def main_task(devices: 'Nornir', selections: List, **kwargs) -> 'AggregatedResul
         task=auto_nornir,
         selections=selections,
         name=f'CONTAINER TASK',
+        # severity_level=logging.DEBUG,
         **kwargs
     )
     return result
@@ -66,10 +70,10 @@ def main() -> None:
     menu_obj = Menu()
     selections = menu_obj.run()
 
+    # before executing the tasks, ask for device credentials
     username = input("\nUsername:")
     password = getpass.getpass()
 
-    # TODO: test specific user/pass should override these
     devices.inventory.defaults.password = password
     devices.inventory.defaults.username = username
 
@@ -83,8 +87,9 @@ def main() -> None:
     result = main_task(devices, selections)
 
     print_result(result)
+
     # ---------------------------------------------------
-    # output.facts_for_customer_csv(result)
+    output.facts_for_customer_csv(result)
     # ---------------------------------------------------
 
     t1_stop = perf_counter()

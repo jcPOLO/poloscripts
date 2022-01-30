@@ -6,7 +6,8 @@ global:
 ios:
   connection_options:
     netmiko:
-      extras: {}
+      extras:
+        fast_cli: False
 
 nxos:
   connection_options:

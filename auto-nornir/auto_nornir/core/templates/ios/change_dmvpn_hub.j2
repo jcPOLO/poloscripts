@@ -1,44 +1,15 @@
 !
-ip access-list extended SSH-access
- 7 permit tcp host 195.235.221.166 any eq 22 log
- 8 permit tcp host 195.235.221.166 eq 22 any established
-!
-track 201 ip sla 201 reachability
+no ip sla 201
 !
 ip sla 201
- no icmp-echo 213.229.183.134 source-interface GigabitEthernet0/0/1
- icmp-echo 195.235.221.166 source-interface GigabitEthernet0/0/1
+ icmp-echo {{ NEW_PUBLIC_IP }} source-interface GigabitEthernet0/0/1
  vrf IWAN-SECONDARY
  threshold 3000
  timeout 3000
  frequency 10
 !
-track 199 ip sla 199 reachability
- delay down 120
+ip sla schedule 201 life forever start-time now
 !
-ip sla 199
- icmp-echo 172.29.2.1 source-interface Tunnel200
- threshold 3000
- timeout 3000
- frequency 4
- history distributions-of-statistics-kept 2
- history enhanced interval 4 buckets 10
-!
-event track 199 state down
- action 10.0 syslog msg "IPsec tunnel 200 down for at least 2 minutes: WARNING"
- action 11.0 snmp-trap strdata "check VPN IP line TIR"
- action 20.0 cli command "enable"
- action 25.0 cli command "conf t"
- action 30.0 cli command "interf tu200"
- action 40.0 cli command "shut"
- action 50.0 cli command "no shut"
- action 99.0 syslog msg "Tunnel200 reset completed"
-!
-do reload in 10
-no
-y
-!
-!
-interface Tunnel200
- ip nhrp nhs 172.29.2.1 nbma 195.235.221.166 multicast
+int tun200 
+ ip nhrp nhs 172.29.2.1 nbma {{ NEW_PUBLIC_IP }} multicast
 !

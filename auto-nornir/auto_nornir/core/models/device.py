@@ -42,6 +42,8 @@ class Device(object):
         #     setattr(self, k, v)
 
         self.devices = self.devices.append(self)
+
+        # TODO: this should not appear in host.yaml file as an attribute.
         self.platforms = self.platforms.append(self.platform)
 
     @staticmethod

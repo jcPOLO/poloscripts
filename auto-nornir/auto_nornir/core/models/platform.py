@@ -12,7 +12,7 @@ class PlatformBase:
             task=napalm_get,
             name=f'FACTs PARA: {self.task.host}',
             getters=['facts'],
-            severity_level=logging.DEBUG,
+            # severity_level=logging.DEBUG,
         ).result
         return r
 
@@ -20,6 +20,9 @@ class PlatformBase:
         pass
 
     def get_config(self):
+        pass
+
+    def get_config_section(self):
         pass
 
     def get_interfaces_status(self):
@@ -35,4 +38,13 @@ class PlatformBase:
         pass
 
     def save_config(self):
+        pass
+
+    def software_upgrade(self):
+        pass
+
+    def set_rsa(self):
+        pass
+
+    def get_dir(self):
         pass

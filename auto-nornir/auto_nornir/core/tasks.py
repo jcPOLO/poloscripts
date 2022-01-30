@@ -5,6 +5,7 @@ from nornir_netmiko.tasks import netmiko_send_config
 from helpers import check_directory
 from auto_nornir.core.models.platforms.platform_factory import PlatformFactory
 import configparser
+import logging
 import os
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -42,6 +43,9 @@ def get_facts(task: Task):
     device = PlatformFactory().get_platform(task)
     return device.get_facts()
 
+def get_config_section(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.get_config_section()
 
 def basic_configuration(
         task: Task,
@@ -62,7 +66,7 @@ def basic_configuration(
                  path=f"{path}{task.host.platform}",
                  ini_vars=ini_vars,
                  nr=task,
-                 #severity_level=logging.DEBUG,
+                 severity_level=logging.DEBUG,
                  )
     # Save the compiled configuration into a host variable
     task.host["config"] = r.result
@@ -70,5 +74,17 @@ def basic_configuration(
     task.run(task=netmiko_send_config,
              name=f"APLICAR PLANTILLA PARA {task.host.platform}",
              config_commands=task.host["config"].splitlines(),
-             #severity_level=logging.DEBUG,
+             # severity_level=logging.DEBUG,
              )
+
+def software_upgrade(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.software_upgrade()
+
+def set_rsa(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.set_rsa()
+
+def get_dir(task: Task):
+    device = PlatformFactory().get_platform(task)
+    return device.get_dir()
