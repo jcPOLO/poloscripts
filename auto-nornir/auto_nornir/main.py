@@ -70,6 +70,7 @@ def main() -> None:
     menu_obj = Menu()
     selections = menu_obj.run()
 
+    # before executing the tasks, ask for device credentials
     username = input("\nUsername:")
     password = getpass.getpass()
 

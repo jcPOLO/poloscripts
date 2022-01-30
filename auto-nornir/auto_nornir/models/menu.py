@@ -12,6 +12,17 @@ TEMPLATES_DIR = dir_path+'/../templates/ios/'
 
 
 class Menu(object):
+    """
+    Class for displaying and executing the available tasks.
+
+    Attributes:
+        getters (dict): All platform based device tasks available.
+        templates (dict): All jinja2 template files available.
+        choices (dict): All task menu entries
+        buttons (dict): Menu options.
+        final_choices (list): All tasks selected to be executed.
+
+    """
 
     configure_logging(logger)
     method_list = [method for method in dir(PlatformBase) if method.startswith('__') is False]

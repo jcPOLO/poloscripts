@@ -5,6 +5,20 @@ import sys
 
 
 class Filter:
+    """
+    Class for filtering inventory by different ways. Shows a menu and return a Nornir object filtered.
+
+    Args:
+        nr (Nornir): Nornir object to be filtered.
+
+    Attributes:
+        choices (dict): Menu options
+        initial_nr (Nornir): Pre-filtered nornir object needed to recover from filters applied.
+        nr (Nornir): Nornir object to be returned filtered.
+        platforms (list): Total device platforms registered in inventory.
+        keys (list): Total inventory column keys to filter by.
+
+    """
 
     platforms = []
     keys = []
