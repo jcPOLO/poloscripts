@@ -1,14 +1,13 @@
 import os
 import sys
-from auto_nornir.core.helpers import configure_logging, is_int
+from auto_nornir.core.helpers import configure_logging, is_int, dir_path
 from auto_nornir.core.models.platform import PlatformBase
 from auto_nornir.core.models.template import Template
 import logging
 from typing import List
 
 logger = logging.getLogger(__name__)
-dir_path = os.path.dirname(os.path.realpath(__file__))
-TEMPLATES_DIR = dir_path+'/../templates/ios/'
+TEMPLATES_DIR = f'{dir_path}/../templates/ios/'
 
 
 class Menu(object):

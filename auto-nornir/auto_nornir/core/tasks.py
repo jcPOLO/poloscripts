@@ -2,13 +2,13 @@ from typing import Dict, List
 from nornir.core import Task
 from nornir_jinja2.plugins.tasks import template_file
 from nornir_netmiko.tasks import netmiko_send_config
-from helpers import check_directory
+from auto_nornir.core.helpers import check_directory, dir_path
 from auto_nornir.core.models.platforms.platform_factory import PlatformFactory
 import configparser
 import logging
 import os
 
-dir_path = os.path.dirname(os.path.realpath(__file__))
+
 TEMPLATES_DIR = dir_path+'/templates/'
 
 

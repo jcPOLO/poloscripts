@@ -2,26 +2,25 @@ from nornir import InitNornir
 from nornir.core import Nornir
 from nornir.core.task import AggregatedResult
 from nornir_utils.plugins.functions import print_result
-from auto_nornir.core.main_functions import auto_nornir
+from auto_nornir.core.main_functions import container_task
 from auto_nornir.core.models.menu import Menu
 from auto_nornir.core.models.bootstrap import Bootstrap
 from auto_nornir.core.models.filter import Filter
-from auto_nornir.core.helpers import configure_logging
-from auto_nornir.core.models.device import Device
+from auto_nornir.core.helpers import configure_logging, dir_path
+import auto_nornir.core.output
 # from tqdm import tqdm
 import getpass
 from typing import List
 import logging
-import output
 
 
 logger = logging.getLogger(__name__)
-CFG_FILE = 'config.yaml'
+CFG_FILE = f'{dir_path}/config.yaml'
 
 
 def main_task(devices: 'Nornir', selections: List, **kwargs) -> 'AggregatedResult':
     result = devices.run(
-        task=auto_nornir,
+        task=container_task,
         selections=selections,
         name=f'CONTAINER TASK',
         # severity_level=logging.DEBUG,
@@ -89,7 +88,7 @@ def main() -> None:
     print_result(result)
 
     # ---------------------------------------------------
-    output.facts_for_customer_csv(result)
+    auto_nornir.core.output.facts_for_customer_csv(result)
     # ---------------------------------------------------
 
     t1_stop = perf_counter()
@@ -111,7 +110,3 @@ def main() -> None:
     print(
         "Elapsed time during the whole program in seconds:",
         '{0:.2f}'.format(elapsed_time))
-
-
-if __name__ == '__main__':
-    main()

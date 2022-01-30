@@ -16,7 +16,7 @@ def is_ip(string: str) -> bool:
     except ValueError:
         return False
 
-
+# Create dir if not exists
 def check_directory(path: str):
     if not os.path.exists(os.path.dirname(path)):
         try:

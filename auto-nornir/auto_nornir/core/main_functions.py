@@ -1,6 +1,6 @@
-from helpers import check_directory
 from nornir.core import Task
-from tasks import backup_config, save_config, get_version, get_facts, basic_configuration, get_config_section, software_upgrade, set_rsa, get_dir
+from auto_nornir.core.helpers import check_directory
+from auto_nornir.core.tasks import backup_config, save_config, get_version, get_facts, basic_configuration, get_config_section, software_upgrade, set_rsa, get_dir
 from typing import List
 # import configparser
 import logging
@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 FINAL_TEMPLATE = 'final.j2'
 
 
-def auto_nornir(
+def container_task(
     task: Task,
     selections: List
 ) -> None:

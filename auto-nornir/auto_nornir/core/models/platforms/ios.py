@@ -2,7 +2,7 @@ from nornir_netmiko.tasks import netmiko_send_command, netmiko_save_config, netm
 from nornir.core.task import Result, Task
 from typing import List, Dict
 from auto_nornir.core.models.platform import PlatformBase
-from helpers import HumanBytes
+from auto_nornir.core.helpers import HumanBytes
 from auto_nornir.core.exceptions import RuntimeErrorException
 import os
 import logging

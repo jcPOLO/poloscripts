@@ -4,7 +4,7 @@ import yaml
 import pathlib
 from typing import Dict
 from csv import DictReader
-from auto_nornir.core.helpers import check_directory, configure_logging
+from auto_nornir.core.helpers import check_directory, configure_logging, dir_path
 from auto_nornir.core.models.device import Device
 from auto_nornir.core.exceptions import ValidationException
 
@@ -32,8 +32,8 @@ class Bootstrap(object):
 
     def __init__(
         self,
-        ini_file: str = '../.global.ini',
-        csv_file: str = 'inventory.csv',
+        ini_file: str = f'{dir_path}/../.global.ini',
+        csv_file: str = f'{dir_path}/inventory.csv',
         encoding: str = "utf-8"
     ):
 
@@ -80,7 +80,7 @@ class Bootstrap(object):
     @staticmethod
     def create_hosts_yaml(d: Dict) -> None:
         file = 'hosts.yaml'
-        path = './inventory/'
+        path = f'{dir_path}/inventory/'
         filename = f'{path}{file}'
         yml = yaml.dump(d)
         check_directory(path)
