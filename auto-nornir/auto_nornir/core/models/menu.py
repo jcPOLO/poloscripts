@@ -7,7 +7,7 @@ import logging
 from typing import List
 
 logger = logging.getLogger(__name__)
-TEMPLATES_DIR = f'{dir_path}/../templates/ios/'
+TEMPLATES_DIR = f'{dir_path}/templates/ios/'
 
 
 class Menu(object):
